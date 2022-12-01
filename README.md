@@ -21,6 +21,7 @@ Frontend:
 Запуск:
 
 * make
+* [http://localhost](http://localhost)
 
 Тесты:
 
