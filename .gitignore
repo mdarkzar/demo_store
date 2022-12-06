@@ -50,3 +50,58 @@ Thumbs.db
 
 docker/volumes
 frontend/node_modules
+mobile/.dart_tool/package_config_subset
+mobile/.dart_tool/package_config.json
+mobile/.dart_tool/build/fcd1995bc647fb959e82ea360c6c2c9a/asset_graph.json
+mobile/.dart_tool/build/generated/demo_store/lib/internal/data/entity/response.json_serializable.g.part
+mobile/.dart_tool/build/generated/demo_store/lib/internal/entity/response/response.json_serializable.g.part
+mobile/.dart_tool/build/generated/demo_store/lib/internal/entity/user/user.json_serializable.g.part
+mobile/.dart_tool/pub/bin/build_runner/build_runner.dart-2.18.5.snapshot
+
+# Miscellaneous
+*.class
+*.log
+*.pyc
+*.swp
+.DS_Store
+.atom/
+.buildlog/
+.history
+.svn/
+
+# IntelliJ related
+*.iml
+*.ipr
+*.iws
+.idea/
+
+# The .vscode folder contains launch configuration and tasks you configure in
+# VS Code which you may wish to be included in version control, so this line
+# is commented out by default.
+#.vscode/
+
+# Flutter/Dart/Pub related
+**/doc/api/
+**/ios/Flutter/.last_build_id
+mobile/.dart_tool/
+mobile/.flutter-plugins
+mobile/.flutter-plugins-dependencies
+mobile/.packages
+mobile/.pub-cache/
+mobile/.pub/
+mobile/build/
+
+# Web related
+mobile/lib/generated_plugin_registrant.dart
+
+# Symbolication related
+mobile/app.*.symbols
+
+# Obfuscation related
+mobile/app.*.map.json
+
+# Android Studio will place build artifacts here
+mobile/android/app/debug
+mobile/android/app/profile
+mobile/android/app/release
+mobile/build/*.apk
