@@ -8,7 +8,7 @@ import (
 )
 
 type Product interface {
-	Create(ts transaction.Session, userID int, name string, price float64) (productID int, err error)
+	Create(ts transaction.Session, userID int, name string, price float64, stID int) (productID int, err error)
 	Remove(ts transaction.Session, productID int) error
 	FindByID(ts transaction.Session, productID int) (product.Product, error)
 	LoadAll(ts transaction.Session) ([]product.Product, error)

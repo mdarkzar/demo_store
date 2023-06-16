@@ -13,6 +13,10 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
+const (
+	defaultStID = 1
+)
+
 func TestCreate(t *testing.T) {
 	r := require.New(t)
 
@@ -38,7 +42,7 @@ func TestCreate(t *testing.T) {
 	faker.FakeData(&name)
 	faker.FakeData(&price)
 
-	productID, err := repo.Create(ts, userID, name, price)
+	productID, err := repo.Create(ts, userID, name, price, defaultStID)
 	r.NoError(err)
 	r.NotEmpty(productID)
 
@@ -69,7 +73,7 @@ func TestFindByID(t *testing.T) {
 	faker.FakeData(&name)
 	faker.FakeData(&price)
 
-	productID, err := repo.Create(ts, userID, name, price)
+	productID, err := repo.Create(ts, userID, name, price, defaultStID)
 	r.NoError(err)
 	r.NotEmpty(productID)
 
@@ -106,7 +110,7 @@ func TestRemove(t *testing.T) {
 	faker.FakeData(&name)
 	faker.FakeData(&price)
 
-	productID, err := repo.Create(ts, userID, name, price)
+	productID, err := repo.Create(ts, userID, name, price, defaultStID)
 	r.NoError(err)
 	r.NotEmpty(productID)
 
@@ -144,7 +148,7 @@ func TestLoadAll(t *testing.T) {
 	faker.FakeData(&name)
 	faker.FakeData(&price)
 
-	productID, err := repo.Create(ts, userID, name, price)
+	productID, err := repo.Create(ts, userID, name, price, defaultStID)
 	r.NoError(err)
 	r.NotEmpty(productID)
 

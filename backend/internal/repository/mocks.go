@@ -38,18 +38,18 @@ func (m *MockProduct) EXPECT() *MockProductMockRecorder {
 }
 
 // Create mocks base method.
-func (m *MockProduct) Create(ts transaction.Session, userID int, name string, price float64) (int, error) {
+func (m *MockProduct) Create(ts transaction.Session, userID int, name string, price float64, stID int) (int, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Create", ts, userID, name, price)
+	ret := m.ctrl.Call(m, "Create", ts, userID, name, price, stID)
 	ret0, _ := ret[0].(int)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // Create indicates an expected call of Create.
-func (mr *MockProductMockRecorder) Create(ts, userID, name, price interface{}) *gomock.Call {
+func (mr *MockProductMockRecorder) Create(ts, userID, name, price, stID interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Create", reflect.TypeOf((*MockProduct)(nil).Create), ts, userID, name, price)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Create", reflect.TypeOf((*MockProduct)(nil).Create), ts, userID, name, price, stID)
 }
 
 // FindByID mocks base method.
