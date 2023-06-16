@@ -33,6 +33,7 @@ func TestCreate(t *testing.T) {
 		UserID int
 		Name   string
 		Price  float64
+		StID   int
 	}
 
 	const (
@@ -57,7 +58,7 @@ func TestCreate(t *testing.T) {
 			prepare: func(f *fields) {
 				gomock.InOrder(
 					f.ri.MockRepository.User.EXPECT().FindByID(f.ts, arg1.UserID).Return(userData, nil),
-					f.ri.MockRepository.Product.EXPECT().Create(f.ts, arg1.UserID, arg1.Name, arg1.Price).Return(id, nil),
+					f.ri.MockRepository.Product.EXPECT().Create(f.ts, arg1.UserID, arg1.Name, arg1.Price, arg1.StID).Return(id, nil),
 					f.bi.TestBridge.Notification.EXPECT().SendAll(f.ts, notification.CreateProductTitle, notification.CreateProductBody(userData.Login, arg1.Name, arg1.Price)).Return(nil),
 				)
 			},
@@ -70,7 +71,7 @@ func TestCreate(t *testing.T) {
 			prepare: func(f *fields) {
 				gomock.InOrder(
 					f.ri.MockRepository.User.EXPECT().FindByID(f.ts, arg1.UserID).Return(userData, nil),
-					f.ri.MockRepository.Product.EXPECT().Create(f.ts, arg1.UserID, arg1.Name, arg1.Price).Return(id, global.ErrDBUnvailable),
+					f.ri.MockRepository.Product.EXPECT().Create(f.ts, arg1.UserID, arg1.Name, arg1.Price, arg1.StID).Return(id, global.ErrDBUnvailable),
 				)
 			},
 			expectedData: id,
@@ -95,7 +96,7 @@ func TestCreate(t *testing.T) {
 			sm := transaction.NewMockSessionManager(ctrl)
 			ui := uimport.NewUsecaseImports(testLogger, f.ri.RepositoryImports(), f.bi.BridgeImports(), sm)
 
-			data, err := ui.Usecase.Product.Create(f.ts, tt.args.UserID, tt.args.Name, tt.args.Price)
+			data, err := ui.Usecase.Product.Create(f.ts, tt.args.UserID, tt.args.Name, tt.args.Price, tt.args.StID)
 			r.Equal(tt.err, err)
 			r.Equal(tt.expectedData, data)
 

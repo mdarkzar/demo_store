@@ -31,7 +31,7 @@ func NewProductUsecase(
 	}
 }
 
-func (u *ProductUsecase) Create(ts transaction.Session, userID int, name string, price float64) (id int, err error) {
+func (u *ProductUsecase) Create(ts transaction.Session, userID int, name string, price float64, stID int) (id int, err error) {
 	lf := logrus.Fields{
 		"userID": userID,
 		"name":   name,
@@ -46,7 +46,7 @@ func (u *ProductUsecase) Create(ts transaction.Session, userID int, name string,
 		return 0, global.ErrInternalError
 	}
 
-	id, err = u.Repository.Product.Create(ts, userID, name, price)
+	id, err = u.Repository.Product.Create(ts, userID, name, price, stID)
 	if err != nil {
 		u.log.WithFields(lf).Errorln(
 			fmt.Sprintf("не удалось создать продукт; ошибка: %v", err),
