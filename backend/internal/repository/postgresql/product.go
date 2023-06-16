@@ -14,7 +14,7 @@ func NewProduct() repository.Product {
 }
 
 func (r *productRepo) Create(ts transaction.Session, userID int, name string, price float64, stID int) (productID int, err error) {
-	return gensql.Get[int](SqlxTx(ts), `INSERT INTO product (name, price, creator_id) VALUES ($1, $2, $3, $4) returning product_id`, name, price, userID, stID)
+	return gensql.Get[int](SqlxTx(ts), `INSERT INTO product (name, price, creator_id, st_id) VALUES ($1, $2, $3, $4) returning product_id`, name, price, userID, stID)
 }
 
 func (r *productRepo) Remove(ts transaction.Session, productID int) error {
