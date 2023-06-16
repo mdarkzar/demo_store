@@ -13,6 +13,7 @@ func (e *RestAPI) CreateProduct(c *gin.Context) {
 	var form struct {
 		Name  string  `json:"name"`
 		Price float64 `json:"price"`
+		StID  int     `json:"st_id"`
 	}
 
 	if err := c.ShouldBind(&form); err != nil {
@@ -23,7 +24,7 @@ func (e *RestAPI) CreateProduct(c *gin.Context) {
 	e.ReturnResult(c, func(ts transaction.Session) (gin.H, error) {
 		userData := c.MustGet(global.UserObjectKey).(user.User)
 
-		productID, err := e.Usecase.Product.Create(ts, userData.ID, form.Name, form.Price)
+		productID, err := e.Usecase.Product.Create(ts, userData.ID, form.Name, form.Price, form.StID)
 		if err != nil {
 			return nil, err
 		}
