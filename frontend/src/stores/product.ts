@@ -57,7 +57,7 @@ export const useProductStore = defineStore("product", {
         product_id: productID,
       });
       res.match(
-        (r: null) => {
+        (_) => {
           toast.success(`Продукт №${productID} успешно удален`);
         },
         (err: Failure) => {
