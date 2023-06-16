@@ -8,3 +8,6 @@ CREATE TABLE IF NOT EXISTS
         PRIMARY KEY (st_id),
         CONSTRAINT storage_ix1 UNIQUE (name)
     );
+
+INSERT INTO storage (name) VALUES ('Склад №1');
+INSERT INTO storage (name) VALUES ('Склад №2');
