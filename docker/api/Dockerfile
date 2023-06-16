@@ -1,4 +1,4 @@
-FROM golang:1.19.3 AS build-env
+FROM golang:1.20 AS build-env
 ARG NAME
 ENV BASE_PATH "/go/src/${NAME}"
 
