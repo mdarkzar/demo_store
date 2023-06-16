@@ -74,7 +74,7 @@ func (e *RestAPI) FindProduct(c *gin.Context) {
 func (e *RestAPI) LoadAllProduct(c *gin.Context) {
 	e.ReturnResultWithoutCommit(c, func(ts transaction.Session) (gin.H, error) {
 		productData, err := e.Usecase.Product.LoadAll(ts)
-		if err != nil {
+		if err != nil && err != global.ErrNoData {
 			return nil, err
 		}
 
