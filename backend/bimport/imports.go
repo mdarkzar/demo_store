@@ -5,6 +5,8 @@ import (
 	"store/tools/datefunctions"
 )
 
+// BridgeImports бриджи - это мосты между usecase или интерфейсы для usecase
+// которые позволяют безболезненно использовать друг друга
 type BridgeImports struct {
 	Bridge Bridge
 }

@@ -11,6 +11,7 @@ import (
 	"time"
 )
 
+// RepositoryImports dependency injection для репозитариев
 type RepositoryImports struct {
 	Config         config.Config
 	SessionManager transaction.SessionManager

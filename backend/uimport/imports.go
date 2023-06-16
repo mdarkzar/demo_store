@@ -11,6 +11,7 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
+// UsecaseImports dependency injection для usecase
 type UsecaseImports struct {
 	Config         config.Config
 	SessionManager transaction.SessionManager
