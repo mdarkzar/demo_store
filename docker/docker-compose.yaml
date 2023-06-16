@@ -57,7 +57,7 @@ services:
     volumes:
       - ./volumes/target:/app/target
   nginx:
-    image: nginx:1.23.2
+    image: nginx:1.23.4
     ports:
       - "80:80"
     volumes:
