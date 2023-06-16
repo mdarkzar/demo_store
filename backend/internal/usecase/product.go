@@ -31,10 +31,6 @@ func NewProductUsecase(
 	}
 }
 
-func (u *ProductUsecase) logPrefix() string {
-	return "[product_usecase]"
-}
-
 func (u *ProductUsecase) Create(ts transaction.Session, userID int, name string, price float64) (id int, err error) {
 	lf := logrus.Fields{
 		"userID": userID,
@@ -44,7 +40,7 @@ func (u *ProductUsecase) Create(ts transaction.Session, userID int, name string,
 
 	userData, err := u.Repository.User.FindByID(ts, userID)
 	if err != nil {
-		u.log.WithFields(lf).Errorln(u.logPrefix(),
+		u.log.WithFields(lf).Errorln(
 			fmt.Sprintf("не удалось найти пользователя; ошибка: %v", err),
 		)
 		return 0, global.ErrInternalError
@@ -52,7 +48,7 @@ func (u *ProductUsecase) Create(ts transaction.Session, userID int, name string,
 
 	id, err = u.Repository.Product.Create(ts, userID, name, price)
 	if err != nil {
-		u.log.WithFields(lf).Errorln(u.logPrefix(),
+		u.log.WithFields(lf).Errorln(
 			fmt.Sprintf("не удалось создать продукт; ошибка: %v", err),
 		)
 		err = global.ErrInternalError
@@ -61,7 +57,7 @@ func (u *ProductUsecase) Create(ts transaction.Session, userID int, name string,
 
 	u.Bridge.Notification.SendAll(ts, notification.CreateProductTitle, notification.CreateProductBody(userData.Login, name, price))
 
-	u.log.WithFields(lf).Infoln(u.logPrefix(), "создан продукт №", id)
+	u.log.WithFields(lf).Infoln("создан продукт №", id)
 
 	return
 
@@ -79,7 +75,7 @@ func (u *ProductUsecase) Remove(ts transaction.Session, userID int, productID in
 			return fmt.Errorf("продукт не найден")
 		}
 
-		u.log.WithFields(lf).Errorln(u.logPrefix(),
+		u.log.WithFields(lf).Errorln(
 			fmt.Sprintf("не удалось найти продукт; ошибка: %v", err),
 		)
 		return global.ErrInternalError
@@ -87,14 +83,14 @@ func (u *ProductUsecase) Remove(ts transaction.Session, userID int, productID in
 
 	userData, err := u.Repository.User.FindByID(ts, userID)
 	if err != nil {
-		u.log.WithFields(lf).Errorln(u.logPrefix(),
+		u.log.WithFields(lf).Errorln(
 			fmt.Sprintf("не удалось найти пользователя; ошибка: %v", err),
 		)
 		return global.ErrInternalError
 	}
 
 	if err := u.Repository.Product.Remove(ts, productID); err != nil {
-		u.log.WithFields(lf).Errorln(u.logPrefix(),
+		u.log.WithFields(lf).Errorln(
 			fmt.Sprintf("не удалось удалить продукт; ошибка: %v", err),
 		)
 		return global.ErrInternalError
@@ -102,7 +98,7 @@ func (u *ProductUsecase) Remove(ts transaction.Session, userID int, productID in
 
 	u.Bridge.Notification.SendAll(ts, notification.DeleteProductTitle, notification.DeleteProductBody(productID, userData.Login, productData.Name, productData.Price))
 
-	u.log.WithFields(lf).Infoln(u.logPrefix(), "удален продукт №", productID)
+	u.log.WithFields(lf).Infoln("удален продукт №", productID)
 
 	return nil
 }
@@ -119,7 +115,7 @@ func (u *ProductUsecase) FindByID(ts transaction.Session, productID int) (produc
 	case nil:
 		return p, nil
 	default:
-		u.log.WithFields(lf).Errorln(u.logPrefix(),
+		u.log.WithFields(lf).Errorln(
 			fmt.Sprintf("не удалось найти продукт; ошибка: %v", err),
 		)
 		return p, global.ErrInternalError
@@ -134,7 +130,7 @@ func (u *ProductUsecase) LoadAll(ts transaction.Session) ([]product.Product, err
 	case nil:
 		return data, nil
 	default:
-		u.log.Errorln(u.logPrefix(),
+		u.log.Errorln(
 			fmt.Sprintf("не удалось найти продукты; ошибка: %v", err),
 		)
 		return data, global.ErrInternalError

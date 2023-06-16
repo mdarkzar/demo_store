@@ -32,10 +32,6 @@ func NewUserUsecase(
 	}
 }
 
-func (u *UserUsecase) logPrefix() string {
-	return "[user_usecase]"
-}
-
 func (u *UserUsecase) Auth(ts transaction.Session, login, password string) (jwtToken string, err error) {
 	lf := logrus.Fields{"login": login}
 
@@ -46,7 +42,7 @@ func (u *UserUsecase) Auth(ts transaction.Session, login, password string) (jwtT
 
 		passHash, err := passfunc.BcryptCreatePassword(password)
 		if err != nil {
-			u.log.WithFields(lf).Errorln(u.logPrefix(),
+			u.log.WithFields(lf).Errorln(
 				fmt.Sprintf("не удалось создать пароль; ошибка: %v", err),
 			)
 			return "", global.ErrInternalError
@@ -54,7 +50,7 @@ func (u *UserUsecase) Auth(ts transaction.Session, login, password string) (jwtT
 
 		userID, err := u.Repository.User.Create(ts, login, passHash)
 		if err != nil {
-			u.log.WithFields(lf).Errorln(u.logPrefix(),
+			u.log.WithFields(lf).Errorln(
 				fmt.Sprintf("не удалось создать пользователя; ошибка: %v", err),
 			)
 			return "", global.ErrInternalError
@@ -62,7 +58,7 @@ func (u *UserUsecase) Auth(ts transaction.Session, login, password string) (jwtT
 
 		userData, err = u.Repository.User.FindByID(ts, userID)
 		if err != nil {
-			u.log.WithFields(lf).Errorln(u.logPrefix(),
+			u.log.WithFields(lf).Errorln(
 				fmt.Sprintf("не удалось загрузить пользователя; ошибка: %v", err),
 			)
 			return "", global.ErrInternalError
@@ -72,7 +68,7 @@ func (u *UserUsecase) Auth(ts transaction.Session, login, password string) (jwtT
 			return "", user.ErrLoginOrPasswordIncorrect
 		}
 	default:
-		u.log.WithFields(lf).Errorln(u.logPrefix(),
+		u.log.WithFields(lf).Errorln(
 			fmt.Sprintf("не удалось найти пользователя; ошибка: %v", err),
 		)
 		return "", global.ErrInternalError
@@ -82,7 +78,7 @@ func (u *UserUsecase) Auth(ts transaction.Session, login, password string) (jwtT
 
 	jwtToken, err = jwt.NewJwtToken(userData.ID, userData.Login, now)
 	if err != nil {
-		u.log.WithFields(lf).Errorln(u.logPrefix(),
+		u.log.WithFields(lf).Errorln(
 			fmt.Sprintf("не удалось создать jwt token; ошибка: %v", err),
 		)
 		return "", global.ErrInternalError
@@ -98,7 +94,7 @@ func (u *UserUsecase) FindUser(userID int) (user.User, error) {
 	if !exists {
 		ts := u.SessionManager.CreateSession()
 		if err := ts.Start(); err != nil {
-			u.log.WithFields(lf).Errorln(u.logPrefix(),
+			u.log.WithFields(lf).Errorln(
 				fmt.Sprintf("не удалось открыть бд сессию; ошибка: %v", err),
 			)
 			return userData, global.ErrInternalError
@@ -107,7 +103,7 @@ func (u *UserUsecase) FindUser(userID int) (user.User, error) {
 
 		userDBData, err := u.Repository.User.FindByID(ts, userID)
 		if err != nil {
-			u.log.WithFields(lf).Errorln(u.logPrefix(),
+			u.log.WithFields(lf).Errorln(
 				fmt.Sprintf("не удалось найти пользователя; ошибка: %v", err),
 			)
 			return user.User{}, global.ErrInternalError

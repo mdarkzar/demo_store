@@ -7,6 +7,7 @@ import (
 	"store/internal/rimport"
 	"store/internal/transaction"
 	"store/internal/usecase"
+	"store/tools/logger"
 
 	"github.com/sirupsen/logrus"
 )
@@ -35,9 +36,9 @@ func NewUsecaseImports(
 		SessionManager: sessionManager,
 
 		Usecase: Usecase{
-			User:         usecase.NewUserUsecase(log, ri, bi),
-			Product:      usecase.NewProductUsecase(log, ri, bi),
-			Notification: usecase.NewNotificationUsecase(log, ri),
+			User:         usecase.NewUserUsecase(logger.NewUsecaseLogger(log, "user"), ri, bi),
+			Product:      usecase.NewProductUsecase(logger.NewUsecaseLogger(log, "product"), ri, bi),
+			Notification: usecase.NewNotificationUsecase(logger.NewUsecaseLogger(log, "notification"), ri),
 		},
 		BridgeImports: bi,
 	}
