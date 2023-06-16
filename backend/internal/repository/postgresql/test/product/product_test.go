@@ -162,3 +162,24 @@ func TestLoadAll(t *testing.T) {
 	r.True(founded)
 
 }
+
+func TestLoadStorageList(t *testing.T) {
+	r := require.New(t)
+
+	conf, err := config.NewConfig(os.Getenv("CONF_PATH"))
+	r.NoError(err)
+	r.NotEmpty(conf)
+
+	db := pgdb.SqlxDB(conf.PostgresURL())
+	r.NoError(db.Ping())
+
+	ts := transaction.NewSQLSession(db)
+	ts.Start()
+	defer ts.Rollback()
+
+	repo := postgresql.NewProduct()
+
+	storageList, err := repo.LoadStorageList(ts)
+	r.NoError(err)
+	r.NotEmpty(storageList)
+}

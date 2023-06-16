@@ -44,3 +44,14 @@ func (r *productRepo) LoadAll(ts transaction.Session) ([]product.Product, error)
 
 	return gensql.Select[product.Product](SqlxTx(ts), sqlQuery)
 }
+
+func (r *productRepo) LoadStorageList(ts transaction.Session) ([]product.Storage, error) {
+	sqlQuery := `
+	select s.st_id, s.name, s.created_date
+	from storage s
+	where s.deleted_date is null
+	order by s.created_date
+	`
+
+	return gensql.Select[product.Storage](SqlxTx(ts), sqlQuery)
+}

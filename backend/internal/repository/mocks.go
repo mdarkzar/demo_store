@@ -82,6 +82,21 @@ func (mr *MockProductMockRecorder) LoadAll(ts interface{}) *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "LoadAll", reflect.TypeOf((*MockProduct)(nil).LoadAll), ts)
 }
 
+// LoadStorageList mocks base method.
+func (m *MockProduct) LoadStorageList(ts transaction.Session) ([]product.Storage, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "LoadStorageList", ts)
+	ret0, _ := ret[0].([]product.Storage)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// LoadStorageList indicates an expected call of LoadStorageList.
+func (mr *MockProductMockRecorder) LoadStorageList(ts interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "LoadStorageList", reflect.TypeOf((*MockProduct)(nil).LoadStorageList), ts)
+}
+
 // Remove mocks base method.
 func (m *MockProduct) Remove(ts transaction.Session, productID int) error {
 	m.ctrl.T.Helper()

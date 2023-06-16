@@ -9,3 +9,9 @@ type Product struct {
 	CreatorID   int       `json:"creator_id" db:"creator_id"`
 	CreatedDate time.Time `json:"created_date" db:"created_date"`
 }
+
+type Storage struct {
+	ID          int       `json:"id" db:"st_id"`
+	Name        string    `json:"name" db:"name"`
+	CreatedDate time.Time `json:"created_date" db:"created_date"`
+}

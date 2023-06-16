@@ -12,6 +12,7 @@ type Product interface {
 	Remove(ts transaction.Session, productID int) error
 	FindByID(ts transaction.Session, productID int) (product.Product, error)
 	LoadAll(ts transaction.Session) ([]product.Product, error)
+	LoadStorageList(ts transaction.Session) ([]product.Storage, error)
 }
 
 type User interface {
