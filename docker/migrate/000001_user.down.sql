@@ -1,3 +1,3 @@
-DROP TABLE
+DROP TABLE IF EXISTS
     "public"."users";
     

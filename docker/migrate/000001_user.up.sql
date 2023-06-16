@@ -1,4 +1,4 @@
-CREATE TABLE
+CREATE TABLE IF NOT EXISTS
     "store"."public".users
     (
         user_id serial NOT NULL,

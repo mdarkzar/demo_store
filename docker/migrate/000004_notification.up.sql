@@ -1,10 +1,4 @@
-DROP TABLE
-    "public"."user$notification";
-
-DROP TABLE
-    "public"."notification";
-
-CREATE TABLE
+CREATE TABLE IF NOT EXISTS
     "store"."public".notification
     (
         n_id bigserial NOT NULL,
@@ -25,4 +19,3 @@ ON
     (
         "user_id"
     );
-
