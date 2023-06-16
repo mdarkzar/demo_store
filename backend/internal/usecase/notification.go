@@ -25,6 +25,7 @@ func NewNotificationUsecase(
 	}
 }
 
+// SendUser отправить сообщение конкретному пользователю
 func (u *NotificationUsecase) SendUser(ts transaction.Session, userID int, title, message string) error {
 	lf := logrus.Fields{
 		"user_id": userID,
@@ -51,6 +52,7 @@ func (u *NotificationUsecase) SendUser(ts transaction.Session, userID int, title
 	return nil
 }
 
+// SendAll отправить сообщения всем
 func (u *NotificationUsecase) SendAll(ts transaction.Session, title, message string) error {
 	lf := logrus.Fields{
 		"title": title,
@@ -89,6 +91,7 @@ func (u *NotificationUsecase) SendAll(ts transaction.Session, title, message str
 	return nil
 }
 
+// LoadUserMessages загрузить сообщения адресованные пользователю
 func (u *NotificationUsecase) LoadUserMessages(ts transaction.Session, userID int) ([]notification.Notification, error) {
 	lf := logrus.Fields{
 		"user_id": userID,

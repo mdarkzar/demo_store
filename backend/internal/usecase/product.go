@@ -31,11 +31,13 @@ func NewProductUsecase(
 	}
 }
 
+// Create создание товара
 func (u *ProductUsecase) Create(ts transaction.Session, userID int, name string, price float64, stID int) (id int, err error) {
 	lf := logrus.Fields{
 		"userID": userID,
 		"name":   name,
 		"price":  price,
+		"st_id":  stID,
 	}
 
 	userData, err := u.Repository.User.FindByID(ts, userID)
@@ -63,6 +65,7 @@ func (u *ProductUsecase) Create(ts transaction.Session, userID int, name string,
 
 }
 
+// Remove удаление товара
 func (u *ProductUsecase) Remove(ts transaction.Session, userID int, productID int) error {
 	lf := logrus.Fields{
 		"userID":    userID,
@@ -103,6 +106,7 @@ func (u *ProductUsecase) Remove(ts transaction.Session, userID int, productID in
 	return nil
 }
 
+// FindByID найти по id
 func (u *ProductUsecase) FindByID(ts transaction.Session, productID int) (product.Product, error) {
 	lf := logrus.Fields{
 		"productID": productID,
@@ -122,6 +126,7 @@ func (u *ProductUsecase) FindByID(ts transaction.Session, productID int) (produc
 	}
 }
 
+// LoadAll загрузить все товары
 func (u *ProductUsecase) LoadAll(ts transaction.Session) ([]product.Product, error) {
 	data, err := u.Repository.Product.LoadAll(ts)
 	switch err {

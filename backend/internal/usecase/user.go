@@ -32,6 +32,7 @@ func NewUserUsecase(
 	}
 }
 
+// Auth аутентификация пользователя, при отсутствии - авторегистрация т.к проект демонстративный
 func (u *UserUsecase) Auth(ts transaction.Session, login, password string) (jwtToken string, err error) {
 	lf := logrus.Fields{"login": login}
 
@@ -87,6 +88,7 @@ func (u *UserUsecase) Auth(ts transaction.Session, login, password string) (jwtT
 	return jwtToken, nil
 }
 
+// FindUser поиск пользователя
 func (u *UserUsecase) FindUser(userID int) (user.User, error) {
 	lf := logrus.Fields{"userID": userID}
 
