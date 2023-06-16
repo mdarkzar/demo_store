@@ -25,7 +25,7 @@ services:
     image: migrate/migrate
     volumes:
         - ./migrate:/migrations
-    command: ["-path", "/migrations", "-database",  "postgres://store:store@db:5432/store?sslmode=disable", "up", "5"]
+    command: ["-path", "/migrations", "-database",  "postgres://store:store@db:5432/store?sslmode=disable", "up", "6"]
   api:
     image: demo_store/api:${API_VERSION}
     build:
