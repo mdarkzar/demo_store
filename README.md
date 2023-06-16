@@ -31,3 +31,4 @@ Frontend:
 
 * Логин и пароль - любой, действует авторегистрация
 
+[Мобильная версия для Android](https://github.com/mdarkzar/demo_store/raw/main/mobile/demo_store_v1.apk)

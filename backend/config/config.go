@@ -21,14 +21,14 @@ type Config struct {
 	} `yaml:"api"`
 }
 
-// NewConfig init and return project config
+// NewConfig инициализация конфига, считывания его с файла
 func NewConfig(confPath string) (Config, error) {
 	var c = Config{}
 	err := configor.Load(&c, confPath)
 	return c, err
 }
 
-// PostgresURL connect to callcenter's postgres db
+// PostgresURL сборка url для подключение к pg
 func (c Config) PostgresURL() string {
 	if os.Getenv("DB_URL") != "" {
 		c.Postgres.URL = os.Getenv("DB_URL")
