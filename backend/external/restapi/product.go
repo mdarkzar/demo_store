@@ -82,3 +82,14 @@ func (e *RestAPI) LoadAllProduct(c *gin.Context) {
 		return gin.H{"productList": productData}, nil
 	})
 }
+
+func (e *RestAPI) LoadStorageList(c *gin.Context) {
+	e.ReturnResultWithoutCommit(c, func(ts transaction.Session) (gin.H, error) {
+		storageList, err := e.Usecase.Product.LoadStorageList(ts)
+		if err != nil && err != global.ErrNoData {
+			return nil, err
+		}
+
+		return gin.H{"storageList": storageList}, nil
+	})
+}

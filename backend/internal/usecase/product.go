@@ -142,3 +142,20 @@ func (u *ProductUsecase) LoadAll(ts transaction.Session) ([]product.Product, err
 	}
 
 }
+
+// LoadStorageList загрузка доступных складов
+func (u *ProductUsecase) LoadStorageList(ts transaction.Session) ([]product.Storage, error) {
+	data, err := u.Repository.Product.LoadStorageList(ts)
+	switch err {
+	case global.ErrNoData:
+		return nil, global.ErrNoData
+	case nil:
+		return data, nil
+	default:
+		u.log.Errorln(
+			fmt.Sprintf("не удалось найти склады; ошибка: %v", err),
+		)
+		return data, global.ErrInternalError
+	}
+
+}
