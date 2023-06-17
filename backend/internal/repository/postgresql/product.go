@@ -24,8 +24,9 @@ func (r *productRepo) Remove(ts transaction.Session, productID int) error {
 
 func (r *productRepo) FindByID(ts transaction.Session, productID int) (product.Product, error) {
 	sqlQuery := `
-	select p.product_id, p.name, p.price, p.creator_id, p.created_date
+	select p.product_id, p.name, p.price, p.creator_id, p.created_date, s.st_id, s.name as storage_name
 	from product p
+		join storage s on (s.st_id = p.st_id)
 	where p.deleted_date is null
 	and p.product_id = $1
 	order by p.created_date
@@ -36,8 +37,9 @@ func (r *productRepo) FindByID(ts transaction.Session, productID int) (product.P
 
 func (r *productRepo) LoadAll(ts transaction.Session) ([]product.Product, error) {
 	sqlQuery := `
-	select p.product_id, p.name, p.price, p.creator_id, p.created_date
+	select p.product_id, p.name, p.price, p.creator_id, p.created_date, s.st_id, s.name as storage_name
 	from product p
+		join storage s on (s.st_id = p.st_id)
 	where p.deleted_date is null
 	order by p.created_date
 	`
