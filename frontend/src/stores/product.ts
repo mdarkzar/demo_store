@@ -19,10 +19,15 @@ interface create {
   product_id: number;
 }
 
+interface loadStorageList {
+  storageList: Array<Storage> | null;
+}
+
 export const useProductStore = defineStore("product", {
   state: () => ({
     productList: null as Array<Product> | null,
     product: null as Product | null,
+    storageList: null as Array<Storage> | null,
   }),
   getters: {},
   actions: {
@@ -37,10 +42,11 @@ export const useProductStore = defineStore("product", {
         }
       );
     },
-    async create(name: string, price: number) {
+    async create(name: string, price: number, st_id: number) {
       const res = await siteAPI.post("/product/create", {
         name: name,
         price: price,
+        st_id: st_id,
       });
       return res.match(
         (r: create) => {
@@ -70,6 +76,17 @@ export const useProductStore = defineStore("product", {
       res.match(
         (r: loadProduct) => {
           this.product = r.product;
+        },
+        (err: Failure) => {
+          toast.error(err.message);
+        }
+      );
+    },
+    async loadStorageList() {
+      const res = await siteAPI.get(`/product/storage_list`);
+      res.match(
+        (r: loadStorageList) => {
+          this.storageList = r.storageList;
         },
         (err: Failure) => {
           toast.error(err.message);

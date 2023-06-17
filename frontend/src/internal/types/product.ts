@@ -5,3 +5,8 @@ export interface Product {
   creator_id: number;
   created_date: Date;
 }
+
+export interface Storage {
+  id: number;
+  name: string;
+}

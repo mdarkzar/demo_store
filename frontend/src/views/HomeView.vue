@@ -17,6 +17,7 @@ const loading = ref(false);
 const form = reactive({
   name: "",
   price: "",
+  st_id: 1
 });
 
 const ruleFormRef = ref<FormInstance>();
@@ -35,6 +36,13 @@ const rules = reactive({
       trigger: "blur",
     },
   ],
+  st_id: [
+    {
+      required: true,
+      message: "Укажите склад",
+      trigger: "blur",
+    },
+  ],
 });
 
 const createProduct = async (formEl: FormInstance | undefined) => {
@@ -42,15 +50,20 @@ const createProduct = async (formEl: FormInstance | undefined) => {
   formEl.validate(async (valid) => {
     if (valid) {
       const price = +form.price;
-      await productStore.create(form.name, price);
-      productModal.value = false;
-      form.name = "";
-      form.price = "";
+      await productStore.create(form.name, price, form.st_id);
+      resetForm();
     } else {
       return false;
     }
   });
 };
+
+const resetForm = () => {
+  productModal.value = false;
+  form.name = "";
+  form.price = "";
+  form.st_id = 1;
+}
 
 const deleteProduct = async (productID: number) => {
   await productStore.remove(productID);
@@ -63,55 +76,51 @@ const logout = async () => {
 };
 
 const loadProductList = async () => {
-  loading.value = true;
   productStore.loadAll();
-  loading.value = false;
+};
+
+const loadStorageList = async () => {
+  productStore.loadStorageList();
 };
 
 onMounted(() => {
-  loadProductList();
+  loading.value = true;
+
+  Promise.all([
+    loadProductList(),
+    loadStorageList()
+  ])
+
+  loading.value = false;
+
 });
 </script>
 
 <template>
-  <el-dialog
-    v-model="productModal"
-    destroy-on-close
-    class="custom__modal"
-    :fullscreen="false"
-    title="Создание продукта"
-  >
-    <el-form
-      ref="ruleFormRef"
-      :model="form"
-      label-position="top"
-      :rules="rules"
-    >
+  <el-dialog v-model="productModal" destroy-on-close class="custom__modal" :fullscreen="false" title="Создание продукта">
+    <el-form ref="ruleFormRef" :model="form" label-position="top" :rules="rules">
       <el-form-item prop="name">
         <el-input v-model="form.name" placeholder="Название"> </el-input>
       </el-form-item>
       <el-form-item prop="price">
-        <el-input
-          type="number"
-          v-model.trim="form.price"
-          placeholder="Стоимость"
-        >
+        <el-input type="number" v-model.trim="form.price" placeholder="Стоимость">
         </el-input>
       </el-form-item>
+      <el-form-item prop="st_id">
+        <el-input type="number" v-model.trim="form.price" placeholder="Стоимость">
+        </el-input>
+        <select name="storage" v-model="form.st_id" v-if="productStore.storageList">
+          <option :value="storage.id" v-for="storage in productStore.storageList">
+            {{ storage.name }}
+          </option>
+        </select>
+      </el-form-item>
       <el-form-item>
-        <el-button @click="createProduct(ruleFormRef)" type="primary"
-          >Создать продукт</el-button
-        >
+        <el-button @click="createProduct(ruleFormRef)" type="primary">Создать продукт</el-button>
       </el-form-item>
     </el-form>
   </el-dialog>
-  <el-dialog
-    v-model="notificationModal"
-    destroy-on-close
-    class="custom__modal"
-    :fullscreen="false"
-    title="Уведомления"
-  >
+  <el-dialog v-model="notificationModal" destroy-on-close class="custom__modal" :fullscreen="false" title="Уведомления">
     <NotificationList></NotificationList>
   </el-dialog>
   <div class="main__section container">
@@ -127,25 +136,14 @@ onMounted(() => {
       </div>
     </el-card>
     <div class="product__list" v-loading.fullscreen.lock="loading">
-      <el-card
-        class="box-card"
-        v-for="product in productStore.productList"
-        :key="product.id"
-      >
+      <el-card class="box-card" v-for="product in productStore.productList" :key="product.id">
         <template #header>
           <div class="card-header">
             <div>{{ product.name }}</div>
-            <el-popconfirm
-              title="Вы уверены, что хотите удалить?"
-              @confirm="deleteProduct(product.id)"
-              confirm-button-text="Да"
-              cancel-button-text="Нет"
-              width="230px"
-            >
+            <el-popconfirm title="Вы уверены, что хотите удалить?" @confirm="deleteProduct(product.id)"
+              confirm-button-text="Да" cancel-button-text="Нет" width="230px">
               <template #reference>
-                <el-button class="button" type="danger" size="small"
-                  >Удалить</el-button
-                >
+                <el-button class="button" type="danger" size="small">Удалить</el-button>
               </template>
             </el-popconfirm>
           </div>
@@ -185,6 +183,7 @@ onMounted(() => {
       row-gap: 1rem;
 
       grid-template-columns: repeat(1, 1fr);
+
       .el-button {
         margin-left: 0px;
       }
