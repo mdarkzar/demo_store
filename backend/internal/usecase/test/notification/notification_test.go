@@ -83,8 +83,7 @@ func TestSendUser(t *testing.T) {
 				tt.prepare(&f)
 			}
 
-			sm := transaction.NewMockSessionManager(ctrl)
-			ui := uimport.NewUsecaseImports(testLogger, f.ri.RepositoryImports(), f.bi.BridgeImports(), sm)
+			ui := uimport.NewUsecaseImports(testLogger, f.ri.RepositoryImports(), f.bi.BridgeImports())
 
 			err := ui.Usecase.Notification.SendUser(f.ts, tt.args.UserID, tt.args.Title, tt.args.Message)
 			r.Equal(tt.err, err)
@@ -175,8 +174,7 @@ func TestSendAll(t *testing.T) {
 				tt.prepare(&f)
 			}
 
-			sm := transaction.NewMockSessionManager(ctrl)
-			ui := uimport.NewUsecaseImports(testLogger, f.ri.RepositoryImports(), f.bi.BridgeImports(), sm)
+			ui := uimport.NewUsecaseImports(testLogger, f.ri.RepositoryImports(), f.bi.BridgeImports())
 
 			err := ui.Usecase.Notification.SendAll(f.ts, tt.args.Title, tt.args.Message)
 			r.Equal(tt.err, err)
@@ -266,8 +264,7 @@ func TestLoadUserMessages(t *testing.T) {
 				tt.prepare(&f)
 			}
 
-			sm := transaction.NewMockSessionManager(ctrl)
-			ui := uimport.NewUsecaseImports(testLogger, f.ri.RepositoryImports(), f.bi.BridgeImports(), sm)
+			ui := uimport.NewUsecaseImports(testLogger, f.ri.RepositoryImports(), f.bi.BridgeImports())
 
 			messages, err := ui.Usecase.Notification.LoadUserMessages(f.ts, tt.args.UserID)
 			r.Equal(tt.err, err)

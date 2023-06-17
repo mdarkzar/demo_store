@@ -93,8 +93,7 @@ func TestCreate(t *testing.T) {
 				tt.prepare(&f)
 			}
 
-			sm := transaction.NewMockSessionManager(ctrl)
-			ui := uimport.NewUsecaseImports(testLogger, f.ri.RepositoryImports(), f.bi.BridgeImports(), sm)
+			ui := uimport.NewUsecaseImports(testLogger, f.ri.RepositoryImports(), f.bi.BridgeImports())
 
 			data, err := ui.Usecase.Product.Create(f.ts, tt.args.UserID, tt.args.Name, tt.args.Price, tt.args.StID)
 			r.Equal(tt.err, err)
@@ -173,8 +172,7 @@ func TestRemove(t *testing.T) {
 				tt.prepare(&f)
 			}
 
-			sm := transaction.NewMockSessionManager(ctrl)
-			ui := uimport.NewUsecaseImports(testLogger, f.ri.RepositoryImports(), f.bi.BridgeImports(), sm)
+			ui := uimport.NewUsecaseImports(testLogger, f.ri.RepositoryImports(), f.bi.BridgeImports())
 
 			err := ui.Usecase.Product.Remove(f.ts, tt.args.UserID, tt.args.ProductID)
 			r.Equal(tt.err, err)
@@ -245,8 +243,7 @@ func TestFindByID(t *testing.T) {
 				tt.prepare(&f)
 			}
 
-			sm := transaction.NewMockSessionManager(ctrl)
-			ui := uimport.NewUsecaseImports(testLogger, f.ri.RepositoryImports(), f.bi.BridgeImports(), sm)
+			ui := uimport.NewUsecaseImports(testLogger, f.ri.RepositoryImports(), f.bi.BridgeImports())
 
 			result, err := ui.Usecase.Product.FindByID(f.ts, tt.args.ProductID)
 			r.Equal(tt.err, err)
@@ -312,8 +309,7 @@ func TestLoadAll(t *testing.T) {
 				tt.prepare(&f)
 			}
 
-			sm := transaction.NewMockSessionManager(ctrl)
-			ui := uimport.NewUsecaseImports(testLogger, f.ri.RepositoryImports(), f.bi.BridgeImports(), sm)
+			ui := uimport.NewUsecaseImports(testLogger, f.ri.RepositoryImports(), f.bi.BridgeImports())
 
 			result, err := ui.Usecase.Product.LoadAll(f.ts)
 			r.Equal(tt.err, err)

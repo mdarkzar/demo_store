@@ -137,8 +137,7 @@ func TestAuth(t *testing.T) {
 				tt.prepare(&f)
 			}
 
-			sm := transaction.NewMockSessionManager(ctrl)
-			ui := uimport.NewUsecaseImports(testLogger, f.ri.RepositoryImports(), f.bi.BridgeImports(), sm)
+			ui := uimport.NewUsecaseImports(testLogger, f.ri.RepositoryImports(), f.bi.BridgeImports())
 
 			data, err := ui.Usecase.User.Auth(f.ts, tt.args.login, tt.args.password)
 			r.Equal(tt.err, err)
@@ -217,8 +216,7 @@ func TestFindUser(t *testing.T) {
 				tt.prepare(&f)
 			}
 
-			sm := transaction.NewMockSessionManager(ctrl)
-			ui := uimport.NewUsecaseImports(testLogger, f.ri.RepositoryImports(), f.bi.BridgeImports(), sm)
+			ui := uimport.NewUsecaseImports(testLogger, f.ri.RepositoryImports(), f.bi.BridgeImports())
 
 			data, err := ui.Usecase.User.FindUser(tt.args.UserID)
 			r.Equal(tt.err, err)

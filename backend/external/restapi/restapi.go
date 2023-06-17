@@ -51,8 +51,8 @@ func (e *RestAPI) logPrefix() string {
 	return fmt.Sprintln("[restapi_external]")
 }
 
-func (e *RestAPI) RunServer(ipport string) {
-	e.gin.Run(ipport)
+func (e *RestAPI) RunServer() {
+	e.gin.Run(e.Config.ApiURL())
 }
 
 func (e *RestAPI) errorResponse(c *gin.Context, err error) {
