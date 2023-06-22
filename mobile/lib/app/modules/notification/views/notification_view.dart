@@ -19,9 +19,9 @@ class NotificationView extends GetView<NotificationController> {
         body: c.obx((state) => _notificationList(state),
             onEmpty: Container(
               padding: const EdgeInsets.only(top: 50),
-              child: Row(
+              child: const Row(
                 mainAxisAlignment: MainAxisAlignment.center,
-                children: const <Widget>[
+                children: <Widget>[
                   Icon(
                     Icons.info_outline,
                     color: Colors.grey,

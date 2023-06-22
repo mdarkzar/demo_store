@@ -1,14 +1,13 @@
 package main
 
 import (
+	"flag"
 	"os"
 	"store/bimport"
-	"store/config"
 	"store/external/restapi"
+	"store/external/worker"
 	"store/internal/rimport"
-	"store/internal/transaction"
 	"store/tools/logger"
-	"store/tools/pgdb"
 	"store/uimport"
 )
 
@@ -17,30 +16,34 @@ var (
 	module         = "demo_store"
 )
 
+const (
+	api         = "api"
+	notifWorker = "notification_worker"
+)
+
 func main() {
 	log := logger.NewFileLogger(module)
 	log.Infoln("версия", version)
 
-	conf, err := config.NewConfig(os.Getenv("CONF_PATH"))
-	if err != nil {
-		log.Fatalln("ошибка при чтении конфига", err)
-	}
-
-	db := pgdb.SqlxDB(conf.PostgresURL())
-	if err := db.Ping(); err != nil {
-		log.Fatalln("бд недоступна", err)
-	}
-
-	sm := transaction.NewSQLSessionManager(db)
-
-	ri := rimport.NewRepositoryImports(sm)
+	ri := rimport.NewRepositoryImports()
 	bi := bimport.NewEmptyBridge()
 
-	ui := uimport.NewUsecaseImports(log, ri, bi, sm)
+	ui := uimport.NewUsecaseImports(log, ri, bi)
 	bi.InitBridge(
 		ui.Usecase.Notification,
+		ui.Usecase.Queue,
 	)
 
-	api := restapi.NewRestAPI(ui, log)
-	api.RunServer(conf.ApiURL())
+	service := flag.String("service", "", "нужно выбрать сервис -service=<name>, доступные: -service=api, -service=notification_worker")
+	flag.Parse()
+
+	switch *service {
+	case api:
+		api := restapi.NewRestAPI(ui, log)
+		api.RunServer()
+	case notifWorker:
+		w := worker.NewNotificationWorker(ui, log)
+		w.Run()
+	}
+
 }

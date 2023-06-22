@@ -31,11 +31,13 @@ func NewProductUsecase(
 	}
 }
 
-func (u *ProductUsecase) Create(ts transaction.Session, userID int, name string, price float64) (id int, err error) {
+// Create создание товара
+func (u *ProductUsecase) Create(ts transaction.Session, userID int, name string, price float64, stID int) (id int, err error) {
 	lf := logrus.Fields{
 		"userID": userID,
 		"name":   name,
 		"price":  price,
+		"st_id":  stID,
 	}
 
 	userData, err := u.Repository.User.FindByID(ts, userID)
@@ -46,7 +48,7 @@ func (u *ProductUsecase) Create(ts transaction.Session, userID int, name string,
 		return 0, global.ErrInternalError
 	}
 
-	id, err = u.Repository.Product.Create(ts, userID, name, price)
+	id, err = u.Repository.Product.Create(ts, userID, name, price, stID)
 	if err != nil {
 		u.log.WithFields(lf).Errorln(
 			fmt.Sprintf("не удалось создать продукт; ошибка: %v", err),
@@ -55,7 +57,7 @@ func (u *ProductUsecase) Create(ts transaction.Session, userID int, name string,
 		return
 	}
 
-	u.Bridge.Notification.SendAll(ts, notification.CreateProductTitle, notification.CreateProductBody(userData.Login, name, price))
+	u.Bridge.Notification.SendAllViaQueue(notification.CreateProductTitle, notification.CreateProductBody(userData.Login, name, price))
 
 	u.log.WithFields(lf).Infoln("создан продукт №", id)
 
@@ -63,6 +65,7 @@ func (u *ProductUsecase) Create(ts transaction.Session, userID int, name string,
 
 }
 
+// Remove удаление товара
 func (u *ProductUsecase) Remove(ts transaction.Session, userID int, productID int) error {
 	lf := logrus.Fields{
 		"userID":    userID,
@@ -96,13 +99,14 @@ func (u *ProductUsecase) Remove(ts transaction.Session, userID int, productID in
 		return global.ErrInternalError
 	}
 
-	u.Bridge.Notification.SendAll(ts, notification.DeleteProductTitle, notification.DeleteProductBody(productID, userData.Login, productData.Name, productData.Price))
+	u.Bridge.Notification.SendAllViaQueue(notification.DeleteProductTitle, notification.DeleteProductBody(productID, userData.Login, productData.Name, productData.Price))
 
 	u.log.WithFields(lf).Infoln("удален продукт №", productID)
 
 	return nil
 }
 
+// FindByID найти по id
 func (u *ProductUsecase) FindByID(ts transaction.Session, productID int) (product.Product, error) {
 	lf := logrus.Fields{
 		"productID": productID,
@@ -122,6 +126,7 @@ func (u *ProductUsecase) FindByID(ts transaction.Session, productID int) (produc
 	}
 }
 
+// LoadAll загрузить все товары
 func (u *ProductUsecase) LoadAll(ts transaction.Session) ([]product.Product, error) {
 	data, err := u.Repository.Product.LoadAll(ts)
 	switch err {
@@ -132,6 +137,23 @@ func (u *ProductUsecase) LoadAll(ts transaction.Session) ([]product.Product, err
 	default:
 		u.log.Errorln(
 			fmt.Sprintf("не удалось найти продукты; ошибка: %v", err),
+		)
+		return data, global.ErrInternalError
+	}
+
+}
+
+// LoadStorageList загрузка доступных складов
+func (u *ProductUsecase) LoadStorageList(ts transaction.Session) ([]product.Storage, error) {
+	data, err := u.Repository.Product.LoadStorageList(ts)
+	switch err {
+	case global.ErrNoData:
+		return nil, global.ErrNoData
+	case nil:
+		return data, nil
+	default:
+		u.log.Errorln(
+			fmt.Sprintf("не удалось найти склады; ошибка: %v", err),
 		)
 		return data, global.ErrInternalError
 	}

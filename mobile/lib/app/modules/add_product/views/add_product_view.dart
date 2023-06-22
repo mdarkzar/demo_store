@@ -1,5 +1,5 @@
+import 'package:demo_store/app/modules/add_product/controllers/storage_controller.dart';
 import 'package:demo_store/widgets/buttons.dart';
-import 'package:demo_store/widgets/notification.dart';
 import 'package:demo_store/widgets/padding.dart';
 import 'package:demo_store/widgets/textfield.dart';
 import 'package:flutter/material.dart';
@@ -10,6 +10,8 @@ import 'package:get/get.dart';
 import '../controllers/add_product_controller.dart';
 
 class AddProductView extends GetView<AddProductController> {
+  const AddProductView({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -44,10 +46,40 @@ class AddProductView extends GetView<AddProductController> {
                       return null;
                     },
                     hintText: "Стоимость"),
+                hSpace(1),
+                Container(
+                  child: _storageList(),
+                ),
                 hSpace(4),
                 saveButton(),
               ],
             )));
+  }
+
+  Widget _storageList() {
+    return GetBuilder<StorageController>(
+      builder: (controller) {
+        return DropdownButtonFormField<int>(
+          decoration: textDecoration('Склад'),
+          value: c.stID.value,
+          validator: (value) {
+            if (value == null) return "Выберите склад";
+            return null;
+          },
+          style: const TextStyle(fontSize: 16, color: Colors.black),
+          isExpanded: true,
+          items: controller.storageList != null
+              ? controller.storageList!.value.map((row) {
+                  return DropdownMenuItem<int>(
+                    value: row.id,
+                    child: Text(row.name),
+                  );
+                }).toList()
+              : null,
+          onChanged: c.selectStorage,
+        );
+      },
+    );
   }
 
   Widget saveButton() {

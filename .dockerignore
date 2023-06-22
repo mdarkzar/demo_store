@@ -3,7 +3,7 @@ frontend/dist
 frontend/.nuxt
 frontend/node_modules
 frontend/yarn.lock
-backend/bin
-backend/log
-backend/migrations
-backend/schema
+*.log
+*.sql
+mobile
+

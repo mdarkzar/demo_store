@@ -10,4 +10,4 @@ fi
 
 NAME=$1
 
-migrate create -ext sql -dir $ROOT/migrate -tz=Asia/Tashkent -format=020120061504  $NAME
+migrate create -ext sql -dir $ROOT/migrate -seq  $NAME

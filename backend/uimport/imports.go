@@ -24,7 +24,6 @@ func NewUsecaseImports(
 	log *logrus.Logger,
 	ri rimport.RepositoryImports,
 	bi *bimport.BridgeImports,
-	sessionManager transaction.SessionManager,
 ) UsecaseImports {
 	config, err := config.NewConfig(os.Getenv("CONF_PATH"))
 	if err != nil {
@@ -33,12 +32,12 @@ func NewUsecaseImports(
 
 	ui := UsecaseImports{
 		Config:         config,
-		SessionManager: sessionManager,
-
+		SessionManager: ri.SessionManager,
 		Usecase: Usecase{
 			User:         usecase.NewUserUsecase(logger.NewUsecaseLogger(log, "user"), ri, bi),
 			Product:      usecase.NewProductUsecase(logger.NewUsecaseLogger(log, "product"), ri, bi),
-			Notification: usecase.NewNotificationUsecase(logger.NewUsecaseLogger(log, "notification"), ri),
+			Notification: usecase.NewNotificationUsecase(logger.NewUsecaseLogger(log, "notification"), ri, bi),
+			Queue:        usecase.NewQueue(logger.NewUsecaseLogger(log, "queue"), ri),
 		},
 		BridgeImports: bi,
 	}

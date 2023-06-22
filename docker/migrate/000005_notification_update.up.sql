@@ -1,7 +1,7 @@
-DROP TABLE
+DROP TABLE IF EXISTS
      "store"."public".notification;
 
-CREATE TABLE
+CREATE TABLE IF NOT EXISTS
     "store"."public".notification
     (
         n_id bigserial NOT NULL,
@@ -12,7 +12,7 @@ CREATE TABLE
     );
 
 
-CREATE TABLE
+CREATE TABLE IF NOT EXISTS
     "store"."public".user$notification
     (
         user_id INTEGER NOT NULL,

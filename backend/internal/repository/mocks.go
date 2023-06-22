@@ -8,10 +8,12 @@ import (
 	reflect "reflect"
 	notification "store/internal/entity/notification"
 	product "store/internal/entity/product"
+	queue "store/internal/entity/queue"
 	user "store/internal/entity/user"
 	transaction "store/internal/transaction"
 
 	gomock "github.com/golang/mock/gomock"
+	amqp "github.com/streadway/amqp"
 )
 
 // MockProduct is a mock of Product interface.
@@ -38,18 +40,18 @@ func (m *MockProduct) EXPECT() *MockProductMockRecorder {
 }
 
 // Create mocks base method.
-func (m *MockProduct) Create(ts transaction.Session, userID int, name string, price float64) (int, error) {
+func (m *MockProduct) Create(ts transaction.Session, userID int, name string, price float64, stID int) (int, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Create", ts, userID, name, price)
+	ret := m.ctrl.Call(m, "Create", ts, userID, name, price, stID)
 	ret0, _ := ret[0].(int)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // Create indicates an expected call of Create.
-func (mr *MockProductMockRecorder) Create(ts, userID, name, price interface{}) *gomock.Call {
+func (mr *MockProductMockRecorder) Create(ts, userID, name, price, stID interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Create", reflect.TypeOf((*MockProduct)(nil).Create), ts, userID, name, price)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Create", reflect.TypeOf((*MockProduct)(nil).Create), ts, userID, name, price, stID)
 }
 
 // FindByID mocks base method.
@@ -80,6 +82,21 @@ func (m *MockProduct) LoadAll(ts transaction.Session) ([]product.Product, error)
 func (mr *MockProductMockRecorder) LoadAll(ts interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "LoadAll", reflect.TypeOf((*MockProduct)(nil).LoadAll), ts)
+}
+
+// LoadStorageList mocks base method.
+func (m *MockProduct) LoadStorageList(ts transaction.Session) ([]product.Storage, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "LoadStorageList", ts)
+	ret0, _ := ret[0].([]product.Storage)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// LoadStorageList indicates an expected call of LoadStorageList.
+func (mr *MockProductMockRecorder) LoadStorageList(ts interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "LoadStorageList", reflect.TypeOf((*MockProduct)(nil).LoadStorageList), ts)
 }
 
 // Remove mocks base method.
@@ -320,4 +337,140 @@ func (m *MockNotification) FindUserMessages(ts transaction.Session, userID int) 
 func (mr *MockNotificationMockRecorder) FindUserMessages(ts, userID interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FindUserMessages", reflect.TypeOf((*MockNotification)(nil).FindUserMessages), ts, userID)
+}
+
+// MockQueue is a mock of Queue interface.
+type MockQueue struct {
+	ctrl     *gomock.Controller
+	recorder *MockQueueMockRecorder
+}
+
+// MockQueueMockRecorder is the mock recorder for MockQueue.
+type MockQueueMockRecorder struct {
+	mock *MockQueue
+}
+
+// NewMockQueue creates a new mock instance.
+func NewMockQueue(ctrl *gomock.Controller) *MockQueue {
+	mock := &MockQueue{ctrl: ctrl}
+	mock.recorder = &MockQueueMockRecorder{mock}
+	return mock
+}
+
+// EXPECT returns an object that allows the caller to indicate expected use.
+func (m *MockQueue) EXPECT() *MockQueueMockRecorder {
+	return m.recorder
+}
+
+// Connect mocks base method.
+func (m *MockQueue) Connect() error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Connect")
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// Connect indicates an expected call of Connect.
+func (mr *MockQueueMockRecorder) Connect() *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Connect", reflect.TypeOf((*MockQueue)(nil).Connect))
+}
+
+// Disconnect mocks base method.
+func (m *MockQueue) Disconnect() error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Disconnect")
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// Disconnect indicates an expected call of Disconnect.
+func (mr *MockQueueMockRecorder) Disconnect() *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Disconnect", reflect.TypeOf((*MockQueue)(nil).Disconnect))
+}
+
+// ExchangeDeclare mocks base method.
+func (m *MockQueue) ExchangeDeclare(name, exchangeType string) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "ExchangeDeclare", name, exchangeType)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// ExchangeDeclare indicates an expected call of ExchangeDeclare.
+func (mr *MockQueueMockRecorder) ExchangeDeclare(name, exchangeType interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ExchangeDeclare", reflect.TypeOf((*MockQueue)(nil).ExchangeDeclare), name, exchangeType)
+}
+
+// IsClosed mocks base method.
+func (m *MockQueue) IsClosed() bool {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "IsClosed")
+	ret0, _ := ret[0].(bool)
+	return ret0
+}
+
+// IsClosed indicates an expected call of IsClosed.
+func (mr *MockQueueMockRecorder) IsClosed() *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "IsClosed", reflect.TypeOf((*MockQueue)(nil).IsClosed))
+}
+
+// ListenQueue mocks base method.
+func (m *MockQueue) ListenQueue(queueName, consumerTag string) (<-chan amqp.Delivery, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "ListenQueue", queueName, consumerTag)
+	ret0, _ := ret[0].(<-chan amqp.Delivery)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// ListenQueue indicates an expected call of ListenQueue.
+func (mr *MockQueueMockRecorder) ListenQueue(queueName, consumerTag interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListenQueue", reflect.TypeOf((*MockQueue)(nil).ListenQueue), queueName, consumerTag)
+}
+
+// QueueBind mocks base method.
+func (m *MockQueue) QueueBind(queueName, routingKey, exchange string) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "QueueBind", queueName, routingKey, exchange)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// QueueBind indicates an expected call of QueueBind.
+func (mr *MockQueueMockRecorder) QueueBind(queueName, routingKey, exchange interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "QueueBind", reflect.TypeOf((*MockQueue)(nil).QueueBind), queueName, routingKey, exchange)
+}
+
+// QueueDeclare mocks base method.
+func (m *MockQueue) QueueDeclare(routingKey string) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "QueueDeclare", routingKey)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// QueueDeclare indicates an expected call of QueueDeclare.
+func (mr *MockQueueMockRecorder) QueueDeclare(routingKey interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "QueueDeclare", reflect.TypeOf((*MockQueue)(nil).QueueDeclare), routingKey)
+}
+
+// Write mocks base method.
+func (m *MockQueue) Write(routingKey, exchange string, message []byte, contentType queue.MessageType) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Write", routingKey, exchange, message, contentType)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// Write indicates an expected call of Write.
+func (mr *MockQueueMockRecorder) Write(routingKey, exchange, message, contentType interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Write", reflect.TypeOf((*MockQueue)(nil).Write), routingKey, exchange, message, contentType)
 }

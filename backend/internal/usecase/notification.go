@@ -2,29 +2,37 @@ package usecase
 
 import (
 	"fmt"
+	"store/bimport"
 	"store/internal/entity/global"
 	"store/internal/entity/notification"
+	"store/internal/entity/queue"
+	"store/internal/proto/notification/notificationproto"
 	"store/internal/rimport"
 	"store/internal/transaction"
 
 	"github.com/sirupsen/logrus"
+	"google.golang.org/protobuf/proto"
 )
 
 type NotificationUsecase struct {
 	log *logrus.Logger
 	rimport.RepositoryImports
+	*bimport.BridgeImports
 }
 
 func NewNotificationUsecase(
 	log *logrus.Logger,
 	ri rimport.RepositoryImports,
+	bi *bimport.BridgeImports,
 ) *NotificationUsecase {
 	return &NotificationUsecase{
 		log:               log,
 		RepositoryImports: ri,
+		BridgeImports:     bi,
 	}
 }
 
+// SendUser отправить сообщение конкретному пользователю
 func (u *NotificationUsecase) SendUser(ts transaction.Session, userID int, title, message string) error {
 	lf := logrus.Fields{
 		"user_id": userID,
@@ -51,6 +59,8 @@ func (u *NotificationUsecase) SendUser(ts transaction.Session, userID int, title
 	return nil
 }
 
+// SendAll отправить сообщения всем
+// избыточная практика рассылать всем пользователям, но для демонстрации можно
 func (u *NotificationUsecase) SendAll(ts transaction.Session, title, message string) error {
 	lf := logrus.Fields{
 		"title": title,
@@ -89,6 +99,7 @@ func (u *NotificationUsecase) SendAll(ts transaction.Session, title, message str
 	return nil
 }
 
+// LoadUserMessages загрузить сообщения адресованные пользователю
 func (u *NotificationUsecase) LoadUserMessages(ts transaction.Session, userID int) ([]notification.Notification, error) {
 	lf := logrus.Fields{
 		"user_id": userID,
@@ -117,4 +128,28 @@ func (u *NotificationUsecase) LoadUserMessages(ts transaction.Session, userID in
 		return nil, global.ErrInternalError
 	}
 
+}
+
+// SendAll отправить сообщения всем через очередь
+func (u *NotificationUsecase) SendAllViaQueue(title, message string) error {
+	lf := logrus.Fields{"title": title}
+
+	notif := notificationproto.Notification{
+		Title:   title,
+		Message: message,
+	}
+
+	b, err := proto.Marshal(&notif)
+	if err != nil {
+		u.log.WithFields(lf).Errorln("не удалось запаковать сообщение в proto", err)
+		return global.ErrInternalError
+	}
+
+	if err = u.Repository.Queue.Write(queue.NotificationQueue, queue.EmptyExchange, b, queue.Proto); err != nil {
+		u.log.WithFields(lf).Errorln("не удалось отправить задачу в очередь")
+	}
+
+	u.log.WithFields(lf).Debugln("отправлено в очередь на уведомление")
+
+	return nil
 }

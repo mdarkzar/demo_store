@@ -33,6 +33,7 @@ func TestCreate(t *testing.T) {
 		UserID int
 		Name   string
 		Price  float64
+		StID   int
 	}
 
 	const (
@@ -57,8 +58,8 @@ func TestCreate(t *testing.T) {
 			prepare: func(f *fields) {
 				gomock.InOrder(
 					f.ri.MockRepository.User.EXPECT().FindByID(f.ts, arg1.UserID).Return(userData, nil),
-					f.ri.MockRepository.Product.EXPECT().Create(f.ts, arg1.UserID, arg1.Name, arg1.Price).Return(id, nil),
-					f.bi.TestBridge.Notification.EXPECT().SendAll(f.ts, notification.CreateProductTitle, notification.CreateProductBody(userData.Login, arg1.Name, arg1.Price)).Return(nil),
+					f.ri.MockRepository.Product.EXPECT().Create(f.ts, arg1.UserID, arg1.Name, arg1.Price, arg1.StID).Return(id, nil),
+					f.bi.TestBridge.Notification.EXPECT().SendAllViaQueue(notification.CreateProductTitle, notification.CreateProductBody(userData.Login, arg1.Name, arg1.Price)).Return(nil),
 				)
 			},
 			expectedData: id,
@@ -70,7 +71,7 @@ func TestCreate(t *testing.T) {
 			prepare: func(f *fields) {
 				gomock.InOrder(
 					f.ri.MockRepository.User.EXPECT().FindByID(f.ts, arg1.UserID).Return(userData, nil),
-					f.ri.MockRepository.Product.EXPECT().Create(f.ts, arg1.UserID, arg1.Name, arg1.Price).Return(id, global.ErrDBUnvailable),
+					f.ri.MockRepository.Product.EXPECT().Create(f.ts, arg1.UserID, arg1.Name, arg1.Price, arg1.StID).Return(id, global.ErrDBUnvailable),
 				)
 			},
 			expectedData: id,
@@ -92,10 +93,9 @@ func TestCreate(t *testing.T) {
 				tt.prepare(&f)
 			}
 
-			sm := transaction.NewMockSessionManager(ctrl)
-			ui := uimport.NewUsecaseImports(testLogger, f.ri.RepositoryImports(), f.bi.BridgeImports(), sm)
+			ui := uimport.NewUsecaseImports(testLogger, f.ri.RepositoryImports(), f.bi.BridgeImports())
 
-			data, err := ui.Usecase.Product.Create(f.ts, tt.args.UserID, tt.args.Name, tt.args.Price)
+			data, err := ui.Usecase.Product.Create(f.ts, tt.args.UserID, tt.args.Name, tt.args.Price, tt.args.StID)
 			r.Equal(tt.err, err)
 			r.Equal(tt.expectedData, data)
 
@@ -139,7 +139,7 @@ func TestRemove(t *testing.T) {
 					f.ri.MockRepository.Product.EXPECT().FindByID(f.ts, arg1.ProductID).Return(result, nil),
 					f.ri.MockRepository.User.EXPECT().FindByID(f.ts, arg1.UserID).Return(userData, nil),
 					f.ri.MockRepository.Product.EXPECT().Remove(f.ts, arg1.ProductID).Return(nil),
-					f.bi.TestBridge.Notification.EXPECT().SendAll(f.ts, notification.DeleteProductTitle, notification.DeleteProductBody(arg1.ProductID, userData.Login, result.Name, result.Price)).Return(nil),
+					f.bi.TestBridge.Notification.EXPECT().SendAllViaQueue(notification.DeleteProductTitle, notification.DeleteProductBody(arg1.ProductID, userData.Login, result.Name, result.Price)).Return(nil),
 				)
 			},
 			args: arg1,
@@ -172,8 +172,7 @@ func TestRemove(t *testing.T) {
 				tt.prepare(&f)
 			}
 
-			sm := transaction.NewMockSessionManager(ctrl)
-			ui := uimport.NewUsecaseImports(testLogger, f.ri.RepositoryImports(), f.bi.BridgeImports(), sm)
+			ui := uimport.NewUsecaseImports(testLogger, f.ri.RepositoryImports(), f.bi.BridgeImports())
 
 			err := ui.Usecase.Product.Remove(f.ts, tt.args.UserID, tt.args.ProductID)
 			r.Equal(tt.err, err)
@@ -244,8 +243,7 @@ func TestFindByID(t *testing.T) {
 				tt.prepare(&f)
 			}
 
-			sm := transaction.NewMockSessionManager(ctrl)
-			ui := uimport.NewUsecaseImports(testLogger, f.ri.RepositoryImports(), f.bi.BridgeImports(), sm)
+			ui := uimport.NewUsecaseImports(testLogger, f.ri.RepositoryImports(), f.bi.BridgeImports())
 
 			result, err := ui.Usecase.Product.FindByID(f.ts, tt.args.ProductID)
 			r.Equal(tt.err, err)
@@ -311,8 +309,7 @@ func TestLoadAll(t *testing.T) {
 				tt.prepare(&f)
 			}
 
-			sm := transaction.NewMockSessionManager(ctrl)
-			ui := uimport.NewUsecaseImports(testLogger, f.ri.RepositoryImports(), f.bi.BridgeImports(), sm)
+			ui := uimport.NewUsecaseImports(testLogger, f.ri.RepositoryImports(), f.bi.BridgeImports())
 
 			result, err := ui.Usecase.Product.LoadAll(f.ts)
 			r.Equal(tt.err, err)

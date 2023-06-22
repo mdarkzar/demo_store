@@ -7,6 +7,7 @@ type Repository struct {
 	User         repository.User
 	UserCache    repository.UserCache
 	Notification repository.Notification
+	Queue        repository.Queue
 }
 
 type MockRepository struct {
@@ -14,4 +15,5 @@ type MockRepository struct {
 	User         *repository.MockUser
 	UserCache    *repository.MockUserCache
 	Notification *repository.MockNotification
+	Queue        *repository.MockQueue
 }

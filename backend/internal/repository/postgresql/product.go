@@ -13,8 +13,8 @@ func NewProduct() repository.Product {
 	return &productRepo{}
 }
 
-func (r *productRepo) Create(ts transaction.Session, userID int, name string, price float64) (productID int, err error) {
-	return gensql.Get[int](SqlxTx(ts), `INSERT INTO product (name, price, creator_id) VALUES ($1, $2, $3) returning product_id`, name, price, userID)
+func (r *productRepo) Create(ts transaction.Session, userID int, name string, price float64, stID int) (productID int, err error) {
+	return gensql.Get[int](SqlxTx(ts), `INSERT INTO product (name, price, creator_id, st_id) VALUES ($1, $2, $3, $4) returning product_id`, name, price, userID, stID)
 }
 
 func (r *productRepo) Remove(ts transaction.Session, productID int) error {
@@ -24,8 +24,9 @@ func (r *productRepo) Remove(ts transaction.Session, productID int) error {
 
 func (r *productRepo) FindByID(ts transaction.Session, productID int) (product.Product, error) {
 	sqlQuery := `
-	select p.product_id, p.name, p.price, p.creator_id, p.created_date
+	select p.product_id, p.name, p.price, p.creator_id, p.created_date, s.st_id, s.name as storage_name
 	from product p
+		join storage s on (s.st_id = p.st_id)
 	where p.deleted_date is null
 	and p.product_id = $1
 	order by p.created_date
@@ -36,11 +37,23 @@ func (r *productRepo) FindByID(ts transaction.Session, productID int) (product.P
 
 func (r *productRepo) LoadAll(ts transaction.Session) ([]product.Product, error) {
 	sqlQuery := `
-	select p.product_id, p.name, p.price, p.creator_id, p.created_date
+	select p.product_id, p.name, p.price, p.creator_id, p.created_date, s.st_id, s.name as storage_name
 	from product p
+		join storage s on (s.st_id = p.st_id)
 	where p.deleted_date is null
 	order by p.created_date
 	`
 
 	return gensql.Select[product.Product](SqlxTx(ts), sqlQuery)
+}
+
+func (r *productRepo) LoadStorageList(ts transaction.Session) ([]product.Storage, error) {
+	sqlQuery := `
+	select s.st_id, s.name, s.created_date
+	from storage s
+	where s.deleted_date is null
+	order by s.created_date
+	`
+
+	return gensql.Select[product.Storage](SqlxTx(ts), sqlQuery)
 }

@@ -1,4 +1,4 @@
-FROM node:lts as build-front
+FROM node:16.20-alpine3.16 as build-front
 
 WORKDIR /app
 COPY frontend/package.json /app

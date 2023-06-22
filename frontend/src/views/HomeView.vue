@@ -17,6 +17,7 @@ const loading = ref(false);
 const form = reactive({
   name: "",
   price: "",
+  st_id: 1,
 });
 
 const ruleFormRef = ref<FormInstance>();
@@ -35,6 +36,13 @@ const rules = reactive({
       trigger: "blur",
     },
   ],
+  st_id: [
+    {
+      required: true,
+      message: "Укажите склад",
+      trigger: "blur",
+    },
+  ],
 });
 
 const createProduct = async (formEl: FormInstance | undefined) => {
@@ -42,14 +50,19 @@ const createProduct = async (formEl: FormInstance | undefined) => {
   formEl.validate(async (valid) => {
     if (valid) {
       const price = +form.price;
-      await productStore.create(form.name, price);
-      productModal.value = false;
-      form.name = "";
-      form.price = "";
+      await productStore.create(form.name, price, form.st_id);
+      resetForm();
     } else {
       return false;
     }
   });
+};
+
+const resetForm = () => {
+  productModal.value = false;
+  form.name = "";
+  form.price = "";
+  form.st_id = 1;
 };
 
 const deleteProduct = async (productID: number) => {
@@ -63,13 +76,19 @@ const logout = async () => {
 };
 
 const loadProductList = async () => {
-  loading.value = true;
   productStore.loadAll();
-  loading.value = false;
+};
+
+const loadStorageList = async () => {
+  productStore.loadStorageList();
 };
 
 onMounted(() => {
-  loadProductList();
+  loading.value = true;
+
+  Promise.all([loadProductList(), loadStorageList()]);
+
+  loading.value = false;
 });
 </script>
 
@@ -98,11 +117,28 @@ onMounted(() => {
         >
         </el-input>
       </el-form-item>
-      <el-form-item>
-        <el-button @click="createProduct(ruleFormRef)" type="primary"
-          >Создать продукт</el-button
+      <el-form-item prop="st_id">
+        <el-select
+          v-model="form.st_id"
+          class="m-2"
+          placeholder="Выберите склад"
+          size="large"
         >
+          <el-option
+            v-for="item in productStore.storageList"
+            :key="item.id"
+            :label="item.name"
+            :value="item.id"
+          />
+        </el-select>
       </el-form-item>
+      <div class="btn-row">
+        <el-form-item>
+          <el-button @click="createProduct(ruleFormRef)" type="primary"
+            >Создать продукт</el-button
+          >
+        </el-form-item>
+      </div>
     </el-form>
   </el-dialog>
   <el-dialog
@@ -150,7 +186,12 @@ onMounted(() => {
             </el-popconfirm>
           </div>
         </template>
-        <div>Стоимость: {{ numberFormatter(product.price) }}</div>
+        <div class="product-description">
+          <div class="description">
+            Стоимость: {{ numberFormatter(product.price) }}
+          </div>
+          <div class="description">{{ product.storage }}</div>
+        </div>
       </el-card>
     </div>
   </div>
@@ -185,6 +226,7 @@ onMounted(() => {
       row-gap: 1rem;
 
       grid-template-columns: repeat(1, 1fr);
+
       .el-button {
         margin-left: 0px;
       }
@@ -201,11 +243,24 @@ onMounted(() => {
   @media screen and (max-width: 1000px) {
     grid-template-columns: repeat(1, 1fr);
   }
+
+  .product-description {
+    font-size: 12pt;
+    .description {
+      margin: 1rem 0 1rem 0;
+      padding-bottom: 0.3rem;
+      border-bottom: 1px solid #d6d6d6;
+    }
+  }
 }
 
 .card-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
+}
+
+.btn-row {
+  margin-top: 2.5rem;
 }
 </style>

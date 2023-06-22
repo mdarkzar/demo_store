@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import { onMounted, reactive, ref } from "vue";
+import { computed, onMounted, reactive, ref } from "vue";
 import { useNotificationStore } from "@/stores/notification";
 import { dateFormat } from "@/tools/filters";
+import { Notification } from "@/internal/types/notification";
 
 const notificationStore = useNotificationStore();
 
@@ -11,6 +12,14 @@ onMounted(async () => {
   await notificationStore.loadMessages();
   loading.value = false;
 });
+
+const messageList = (m: Notification): Array<string> => {
+  if (m.message) {
+    return m.message.split("\n");
+  }
+
+  return [];
+};
 </script>
 
 <template>
@@ -35,7 +44,13 @@ onMounted(async () => {
               </div>
             </template>
 
-            <div class="message__body">{{ message.message }}</div>
+            <div
+              class="message__body"
+              v-for="row in messageList(message)"
+              :key="row"
+            >
+              {{ row }}
+            </div>
           </el-card>
         </div>
       </el-scrollbar>
@@ -57,5 +72,6 @@ onMounted(async () => {
 
 .message__body {
   white-space: pre-line;
+  margin: 0.5rem 0 0.5rem 0;
 }
 </style>

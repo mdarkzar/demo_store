@@ -19,7 +19,7 @@ func (e *RestAPI) ReturnSuccessNull(
 ) {
 	ts := e.SessionManager.CreateSession()
 	if err := ts.Start(); err != nil {
-		e.log.Errorln(e.logPrefix(), "не удалось открыть бд сессию", err)
+		e.log.Errorln("не удалось открыть бд сессию", err)
 		e.errorResponse(c, global.ErrInternalError)
 		return
 	}
@@ -32,7 +32,7 @@ func (e *RestAPI) ReturnSuccessNull(
 	}
 
 	if err := ts.Commit(); err != nil {
-		e.log.Errorln(e.logPrefix(), "не удалось сохранить бд сессию", err)
+		e.log.Errorln("не удалось сохранить бд сессию", err)
 		e.errorResponse(c, global.ErrInternalError)
 		return
 	}
@@ -46,7 +46,7 @@ func (e *RestAPI) ReturnResult(
 ) {
 	ts := e.SessionManager.CreateSession()
 	if err := ts.Start(); err != nil {
-		e.log.Errorln(e.logPrefix(), "не удалось открыть бд сессию", err)
+		e.log.Errorln("не удалось открыть бд сессию", err)
 		e.errorResponse(c, global.ErrInternalError)
 		return
 	}
@@ -59,7 +59,7 @@ func (e *RestAPI) ReturnResult(
 	}
 
 	if err := ts.Commit(); err != nil {
-		e.log.Errorln(e.logPrefix(), "не удалось сохранить бд сессию", err)
+		e.log.Errorln("не удалось сохранить бд сессию", err)
 		e.errorResponse(c, global.ErrInternalError)
 		return
 	}
@@ -73,7 +73,7 @@ func (e *RestAPI) ReturnResultWithoutCommit(
 ) {
 	ts := e.SessionManager.CreateSession()
 	if err := ts.Start(); err != nil {
-		e.log.Errorln(e.logPrefix(), "не удалось открыть бд сессию", err)
+		e.log.Errorln("не удалось открыть бд сессию", err)
 		e.errorResponse(c, global.ErrInternalError)
 		return
 	}

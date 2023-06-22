@@ -1,8 +1,9 @@
 package restapi
 
 import (
-	"fmt"
+	"context"
 	"net/http"
+	"store/tools/logger"
 	"store/uimport"
 
 	"github.com/gin-contrib/gzip"
@@ -13,7 +14,6 @@ import (
 type RestAPI struct {
 	log *logrus.Logger
 	gin *gin.Engine
-
 	uimport.UsecaseImports
 }
 
@@ -23,7 +23,7 @@ func NewRestAPI(ui uimport.UsecaseImports,
 	api := &RestAPI{
 		gin:            gin.Default(),
 		UsecaseImports: ui,
-		log:            log,
+		log:            logger.NewUsecaseLogger(log, "restapi"),
 	}
 
 	api.gin.Use(gzip.Gzip(gzip.DefaultCompression))
@@ -39,7 +39,8 @@ func NewRestAPI(ui uimport.UsecaseImports,
 	p.POST("/create", api.AuthRequired(), api.CreateProduct)
 	p.POST("/remove", api.AuthRequired(), api.RemoveProduct)
 	p.GET("/find/:id", api.AuthRequired(), api.FindProduct)
-	p.GET("/load", api.AuthRequired(), api.LoadAllProduct)
+	p.GET("/load_all", api.AuthRequired(), api.LoadAllProduct)
+	p.GET("/storage_list", api.AuthRequired(), api.LoadStorageList)
 
 	n := apiGroup.Group("/notification")
 	n.GET("/new", api.AuthRequired(), api.LoadMessages)
@@ -47,12 +48,15 @@ func NewRestAPI(ui uimport.UsecaseImports,
 	return api
 }
 
-func (e *RestAPI) logPrefix() string {
-	return fmt.Sprintln("[restapi_external]")
-}
+func (e *RestAPI) RunServer() {
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 
-func (e *RestAPI) RunServer(ipport string) {
-	e.gin.Run(ipport)
+	// подключение к очереди
+	go e.Usecase.Queue.ConnectionControl(ctx)
+	e.Usecase.Queue.WaitConnectionInitialized()
+
+	e.gin.Run(e.Config.ApiURL())
 }
 
 func (e *RestAPI) errorResponse(c *gin.Context, err error) {

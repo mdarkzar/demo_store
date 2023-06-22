@@ -13,6 +13,7 @@ func (e *RestAPI) CreateProduct(c *gin.Context) {
 	var form struct {
 		Name  string  `json:"name"`
 		Price float64 `json:"price"`
+		StID  int     `json:"st_id"`
 	}
 
 	if err := c.ShouldBind(&form); err != nil {
@@ -23,7 +24,7 @@ func (e *RestAPI) CreateProduct(c *gin.Context) {
 	e.ReturnResult(c, func(ts transaction.Session) (gin.H, error) {
 		userData := c.MustGet(global.UserObjectKey).(user.User)
 
-		productID, err := e.Usecase.Product.Create(ts, userData.ID, form.Name, form.Price)
+		productID, err := e.Usecase.Product.Create(ts, userData.ID, form.Name, form.Price, form.StID)
 		if err != nil {
 			return nil, err
 		}
@@ -79,5 +80,16 @@ func (e *RestAPI) LoadAllProduct(c *gin.Context) {
 		}
 
 		return gin.H{"productList": productData}, nil
+	})
+}
+
+func (e *RestAPI) LoadStorageList(c *gin.Context) {
+	e.ReturnResultWithoutCommit(c, func(ts transaction.Session) (gin.H, error) {
+		storageList, err := e.Usecase.Product.LoadStorageList(ts)
+		if err != nil && err != global.ErrNoData {
+			return nil, err
+		}
+
+		return gin.H{"storageList": storageList}, nil
 	})
 }

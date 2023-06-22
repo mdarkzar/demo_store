@@ -13,10 +13,12 @@ type BridgeImports struct {
 
 func (b *BridgeImports) InitBridge(
 	notification bridge.Notification,
+	queue bridge.Queue,
 ) {
 	b.Bridge = Bridge{
 		Date:         datefunctions.NewDateTool(),
 		Notification: notification,
+		Queue:        queue,
 	}
 }
 

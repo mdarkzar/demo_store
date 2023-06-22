@@ -18,10 +18,8 @@ class HomeView extends GetView<HomeController> {
       appBar: AppBar(
         title: const Text('Demo Store'),
         actions: [
-          IconButton(
-              onPressed: c.openNotification, icon: const Icon(MdiIcons.bell)),
-          IconButton(
-              onPressed: c.createProduct, icon: const Icon(MdiIcons.plus))
+          IconButton(onPressed: c.openNotification, icon: Icon(MdiIcons.bell)),
+          IconButton(onPressed: c.createProduct, icon: Icon(MdiIcons.plus))
         ],
       ),
       drawer: const AppDrawer(),
@@ -32,8 +30,8 @@ class HomeView extends GetView<HomeController> {
     );
   }
 
-  _productList(ProductList productList) {
-    final data = productList.productList!;
+  _productList(ProductList loaded) {
+    final data = loaded.productList!;
 
     return RefreshIndicator(
         onRefresh: () => controller.loadData(),
@@ -64,6 +62,10 @@ class HomeView extends GetView<HomeController> {
                         cardField(
                           'Стоимость',
                           Formatter.formatCurrency.format(row.price),
+                        ),
+                        cardField(
+                          'Размещение',
+                          row.storage,
                         ),
                         const SizedBox(
                           height: 15,
