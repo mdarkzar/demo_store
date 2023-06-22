@@ -1,8 +1,8 @@
 package restapi
 
 import (
-	"fmt"
 	"net/http"
+	"store/tools/logger"
 	"store/uimport"
 
 	"github.com/gin-contrib/gzip"
@@ -13,7 +13,6 @@ import (
 type RestAPI struct {
 	log *logrus.Logger
 	gin *gin.Engine
-
 	uimport.UsecaseImports
 }
 
@@ -23,7 +22,7 @@ func NewRestAPI(ui uimport.UsecaseImports,
 	api := &RestAPI{
 		gin:            gin.Default(),
 		UsecaseImports: ui,
-		log:            log,
+		log:            logger.NewUsecaseLogger(log, "restapi"),
 	}
 
 	api.gin.Use(gzip.Gzip(gzip.DefaultCompression))
@@ -46,10 +45,6 @@ func NewRestAPI(ui uimport.UsecaseImports,
 	n.GET("/new", api.AuthRequired(), api.LoadMessages)
 
 	return api
-}
-
-func (e *RestAPI) logPrefix() string {
-	return fmt.Sprintln("[restapi_external]")
 }
 
 func (e *RestAPI) RunServer() {
