@@ -6,8 +6,8 @@
 
 API:
 
-* Golang 1.9.3
-* База данных: Postgresql 15
+* Golang 1.2.0
+* База данных: Postgresql 15.3
 * Организация кода: чистая архитектура (собственная версия реализации на языке Golang)
 
 Frontend:
@@ -29,6 +29,6 @@ Frontend:
 
 [Демо](https://demo-store.darkzar.uz)
 
-* Логин и пароль - любой, действует авторегистрация
+* Логин любой и пароль - любой, действует авторегистрация, но логин должен начинаться с demo, например demo1, demo2 и тд.
 
 [Мобильная версия для Android](https://github.com/mdarkzar/demo_store/raw/main/mobile/demo_store_v1.apk)
