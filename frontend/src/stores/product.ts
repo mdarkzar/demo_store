@@ -1,5 +1,5 @@
 import { Failure } from "@/internal/entity/failure";
-import { Product } from "@/internal/types/product";
+import { Product, Storage } from "@/internal/types/product";
 import { defineStore } from "pinia";
 import { useToast } from "vue-toastification";
 import { siteAPI } from "./api";
