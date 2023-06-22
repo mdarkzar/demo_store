@@ -34,6 +34,7 @@ func NewTestRepositoryImports(
 			User:         repository.NewMockUser(ctrl),
 			UserCache:    repository.NewMockUserCache(ctrl),
 			Notification: repository.NewMockNotification(ctrl),
+			Queue:        repository.NewMockQueue(ctrl),
 		},
 	}
 }
@@ -64,6 +65,7 @@ func (t *TestRepositoryImports) RepositoryImports() RepositoryImports {
 			User:         t.MockRepository.User,
 			UserCache:    t.MockRepository.UserCache,
 			Notification: t.MockRepository.Notification,
+			Queue:        t.MockRepository.Queue,
 		},
 	}
 }

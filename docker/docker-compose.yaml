@@ -26,6 +26,20 @@ services:
     volumes:
         - ./migrate:/migrations
     command: ["-path", "/migrations", "-database",  "postgres://store:store@db:5432/store?sslmode=disable", "up", "6"]
+  queue:
+    image: 'rabbitmq:3.12.0-alpine'
+    hostname: 'demo_store'
+    environment:
+      - 'RABBITMQ_DEFAULT_USER=demo_store'
+      - 'RABBITMQ_DEFAULT_PASS=7XGBMVLKpSeD5Cy74GWq'
+      - 'RABBITMQ_SERVER_ADDITIONAL_ERL_ARGS=-rabbit log_levels [{connection,error},{default,error}] disk_free_limit 2147483648'
+    volumes:
+      - ./volumes/rabbitmq:/var/lib/rabbitmq
+    healthcheck:
+      test: rabbitmq-diagnostics -q ping
+      interval: 5s
+      timeout: 5s
+      retries: 3
   api:
     image: demo_store/api:${API_VERSION}
     build:
@@ -34,12 +48,14 @@ services:
       args:
         VERSION: ${API_VERSION}
         NAME: api
+    command: "/app/${NAME} -service=api"
     environment:
       TZ: 'Asia/Tashkent'
       DEBUG: 'true'
       VERSION: ${API_VERSION}
       DB_URL: db
       GIN_MODE: release
+      RABBIT_URL: demo_store:7XGBMVLKpSeD5Cy74GWq@queue:5672
     ports:
       - 9000:9000
     volumes:
@@ -47,6 +63,33 @@ services:
       - ./conf.yaml:/app/conf.yaml
     depends_on:
       db:
+        condition: service_healthy
+      queue:
+        condition: service_healthy
+    stop_grace_period: 3s
+  notification_worker:
+    image: demo_store/api:${API_VERSION}
+    build:
+      context: ..
+      dockerfile: ./docker/api/Dockerfile
+      args:
+        VERSION: ${API_VERSION}
+        NAME: api
+    command: "/app/${NAME} -service=notification_worker"
+    environment:
+      TZ: 'Asia/Tashkent'
+      DEBUG: 'true'
+      VERSION: ${API_VERSION}
+      DB_URL: db
+      GIN_MODE: release
+      RABBIT_URL: demo_store:7XGBMVLKpSeD5Cy74GWq@queue:5672
+    volumes:
+      - ./volumes/log:/app/log
+      - ./conf.yaml:/app/conf.yaml
+    depends_on:
+      db:
+        condition: service_healthy
+      queue:
         condition: service_healthy
     stop_grace_period: 3s
   site:
@@ -68,4 +111,3 @@ services:
         condition: service_started
       api:
         condition: service_started
-

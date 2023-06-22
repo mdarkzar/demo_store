@@ -36,7 +36,8 @@ func NewUsecaseImports(
 		Usecase: Usecase{
 			User:         usecase.NewUserUsecase(logger.NewUsecaseLogger(log, "user"), ri, bi),
 			Product:      usecase.NewProductUsecase(logger.NewUsecaseLogger(log, "product"), ri, bi),
-			Notification: usecase.NewNotificationUsecase(logger.NewUsecaseLogger(log, "notification"), ri),
+			Notification: usecase.NewNotificationUsecase(logger.NewUsecaseLogger(log, "notification"), ri, bi),
+			Queue:        usecase.NewQueue(logger.NewUsecaseLogger(log, "queue"), ri),
 		},
 		BridgeImports: bi,
 	}

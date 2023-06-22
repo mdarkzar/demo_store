@@ -3,8 +3,11 @@ package repository
 import (
 	"store/internal/entity/notification"
 	"store/internal/entity/product"
+	"store/internal/entity/queue"
 	"store/internal/entity/user"
 	"store/internal/transaction"
+
+	"github.com/streadway/amqp"
 )
 
 type Product interface {
@@ -33,4 +36,15 @@ type Notification interface {
 	CreateUserMessage(ts transaction.Session, userID, messageID int) error
 	FindUserMessages(ts transaction.Session, userID int) ([]notification.Notification, error)
 	Delete(ts transaction.Session, nID, userID int) error
+}
+
+type Queue interface {
+	Connect() error
+	Disconnect() error
+	Write(routingKey, exchange string, message []byte, contentType queue.MessageType) (err error)
+	QueueDeclare(routingKey string) error
+	QueueBind(queueName, routingKey string, exchange string) error
+	ExchangeDeclare(name, exchangeType string) error
+	ListenQueue(queueName string, consumerTag string) (data <-chan amqp.Delivery, err error)
+	IsClosed() bool
 }

@@ -19,6 +19,7 @@ func NewTestBridgeImports(
 		TestBridge: TestBridge{
 			Date:         bridge.NewMockDate(ctrl),
 			Notification: bridge.NewMockNotification(ctrl),
+			Queue:        bridge.NewMockQueue(ctrl),
 		},
 	}
 }
@@ -28,6 +29,7 @@ func (t *TestBridgeImports) BridgeImports() *BridgeImports {
 		Bridge: Bridge{
 			Date:         t.TestBridge.Date,
 			Notification: t.TestBridge.Notification,
+			Queue:        t.TestBridge.Queue,
 		},
 	}
 }

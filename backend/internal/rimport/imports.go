@@ -6,6 +6,7 @@ import (
 	"store/config"
 	"store/internal/entity/user"
 	"store/internal/repository/postgresql"
+	"store/internal/repository/rabbitmq"
 	"store/internal/transaction"
 	"store/tools/inmemorycache"
 	"store/tools/pgdb"
@@ -40,6 +41,7 @@ func NewRepositoryImports() RepositoryImports {
 			User:         postgresql.NewUser(),
 			UserCache:    inmemorycache.NewInmemoryCacheRepository[user.User, int](time.Hour * 24),
 			Notification: postgresql.NewNotification(),
+			Queue:        rabbitmq.NewQueue(conf),
 		},
 	}
 }

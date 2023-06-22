@@ -5,11 +5,14 @@
 package bridge
 
 import (
+	context "context"
 	reflect "reflect"
+	queue "store/internal/entity/queue"
 	transaction "store/internal/transaction"
 	time "time"
 
 	gomock "github.com/golang/mock/gomock"
+	amqp "github.com/streadway/amqp"
 )
 
 // MockDate is a mock of Date interface.
@@ -100,6 +103,20 @@ func (mr *MockNotificationMockRecorder) SendAll(ts, title, message interface{}) 
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SendAll", reflect.TypeOf((*MockNotification)(nil).SendAll), ts, title, message)
 }
 
+// SendAllViaQueue mocks base method.
+func (m *MockNotification) SendAllViaQueue(title, message string) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "SendAllViaQueue", title, message)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// SendAllViaQueue indicates an expected call of SendAllViaQueue.
+func (mr *MockNotificationMockRecorder) SendAllViaQueue(title, message interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SendAllViaQueue", reflect.TypeOf((*MockNotification)(nil).SendAllViaQueue), title, message)
+}
+
 // SendUser mocks base method.
 func (m *MockNotification) SendUser(ts transaction.Session, userID int, title, message string) error {
 	m.ctrl.T.Helper()
@@ -112,4 +129,122 @@ func (m *MockNotification) SendUser(ts transaction.Session, userID int, title, m
 func (mr *MockNotificationMockRecorder) SendUser(ts, userID, title, message interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SendUser", reflect.TypeOf((*MockNotification)(nil).SendUser), ts, userID, title, message)
+}
+
+// MockQueue is a mock of Queue interface.
+type MockQueue struct {
+	ctrl     *gomock.Controller
+	recorder *MockQueueMockRecorder
+}
+
+// MockQueueMockRecorder is the mock recorder for MockQueue.
+type MockQueueMockRecorder struct {
+	mock *MockQueue
+}
+
+// NewMockQueue creates a new mock instance.
+func NewMockQueue(ctrl *gomock.Controller) *MockQueue {
+	mock := &MockQueue{ctrl: ctrl}
+	mock.recorder = &MockQueueMockRecorder{mock}
+	return mock
+}
+
+// EXPECT returns an object that allows the caller to indicate expected use.
+func (m *MockQueue) EXPECT() *MockQueueMockRecorder {
+	return m.recorder
+}
+
+// ConnectionControl mocks base method.
+func (m *MockQueue) ConnectionControl(ctx context.Context) {
+	m.ctrl.T.Helper()
+	m.ctrl.Call(m, "ConnectionControl", ctx)
+}
+
+// ConnectionControl indicates an expected call of ConnectionControl.
+func (mr *MockQueueMockRecorder) ConnectionControl(ctx interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ConnectionControl", reflect.TypeOf((*MockQueue)(nil).ConnectionControl), ctx)
+}
+
+// DeclareQueue mocks base method.
+func (m *MockQueue) DeclareQueue(queueName string) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "DeclareQueue", queueName)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// DeclareQueue indicates an expected call of DeclareQueue.
+func (mr *MockQueueMockRecorder) DeclareQueue(queueName interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeclareQueue", reflect.TypeOf((*MockQueue)(nil).DeclareQueue), queueName)
+}
+
+// ExchangeDeclare mocks base method.
+func (m *MockQueue) ExchangeDeclare(exchange, exchangeType string) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "ExchangeDeclare", exchange, exchangeType)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// ExchangeDeclare indicates an expected call of ExchangeDeclare.
+func (mr *MockQueueMockRecorder) ExchangeDeclare(exchange, exchangeType interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ExchangeDeclare", reflect.TypeOf((*MockQueue)(nil).ExchangeDeclare), exchange, exchangeType)
+}
+
+// Listen mocks base method.
+func (m *MockQueue) Listen(routingKey, consumerTag string) (<-chan amqp.Delivery, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Listen", routingKey, consumerTag)
+	ret0, _ := ret[0].(<-chan amqp.Delivery)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// Listen indicates an expected call of Listen.
+func (mr *MockQueueMockRecorder) Listen(routingKey, consumerTag interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Listen", reflect.TypeOf((*MockQueue)(nil).Listen), routingKey, consumerTag)
+}
+
+// QueueDeclareWithBind mocks base method.
+func (m *MockQueue) QueueDeclareWithBind(queueName, routingKey, exchangeName string) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "QueueDeclareWithBind", queueName, routingKey, exchangeName)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// QueueDeclareWithBind indicates an expected call of QueueDeclareWithBind.
+func (mr *MockQueueMockRecorder) QueueDeclareWithBind(queueName, routingKey, exchangeName interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "QueueDeclareWithBind", reflect.TypeOf((*MockQueue)(nil).QueueDeclareWithBind), queueName, routingKey, exchangeName)
+}
+
+// WaitConnectionInitialized mocks base method.
+func (m *MockQueue) WaitConnectionInitialized() {
+	m.ctrl.T.Helper()
+	m.ctrl.Call(m, "WaitConnectionInitialized")
+}
+
+// WaitConnectionInitialized indicates an expected call of WaitConnectionInitialized.
+func (mr *MockQueueMockRecorder) WaitConnectionInitialized() *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "WaitConnectionInitialized", reflect.TypeOf((*MockQueue)(nil).WaitConnectionInitialized))
+}
+
+// Write mocks base method.
+func (m *MockQueue) Write(routingKey, exchange string, message []byte, contentType queue.MessageType) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Write", routingKey, exchange, message, contentType)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// Write indicates an expected call of Write.
+func (mr *MockQueueMockRecorder) Write(routingKey, exchange, message, contentType interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Write", reflect.TypeOf((*MockQueue)(nil).Write), routingKey, exchange, message, contentType)
 }
