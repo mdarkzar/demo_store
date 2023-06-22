@@ -9,6 +9,7 @@ abstract class Product with _$Product {
     int id,
     double price,
     String name,
+    String storage,
   ) = _Product;
   factory Product.fromJson(Map<String, dynamic> json) =>
       _$ProductFromJson(json);

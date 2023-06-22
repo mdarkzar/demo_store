@@ -23,6 +23,7 @@ mixin _$Product {
   int get id => throw _privateConstructorUsedError;
   double get price => throw _privateConstructorUsedError;
   String get name => throw _privateConstructorUsedError;
+  String get storage => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -34,7 +35,7 @@ abstract class $ProductCopyWith<$Res> {
   factory $ProductCopyWith(Product value, $Res Function(Product) then) =
       _$ProductCopyWithImpl<$Res, Product>;
   @useResult
-  $Res call({int id, double price, String name});
+  $Res call({int id, double price, String name, String storage});
 }
 
 /// @nodoc
@@ -53,6 +54,7 @@ class _$ProductCopyWithImpl<$Res, $Val extends Product>
     Object? id = null,
     Object? price = null,
     Object? name = null,
+    Object? storage = null,
   }) {
     return _then(_value.copyWith(
       id: null == id
@@ -67,6 +69,10 @@ class _$ProductCopyWithImpl<$Res, $Val extends Product>
           ? _value.name
           : name // ignore: cast_nullable_to_non_nullable
               as String,
+      storage: null == storage
+          ? _value.storage
+          : storage // ignore: cast_nullable_to_non_nullable
+              as String,
     ) as $Val);
   }
 }
@@ -78,7 +84,7 @@ abstract class _$$_ProductCopyWith<$Res> implements $ProductCopyWith<$Res> {
       __$$_ProductCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({int id, double price, String name});
+  $Res call({int id, double price, String name, String storage});
 }
 
 /// @nodoc
@@ -94,6 +100,7 @@ class __$$_ProductCopyWithImpl<$Res>
     Object? id = null,
     Object? price = null,
     Object? name = null,
+    Object? storage = null,
   }) {
     return _then(_$_Product(
       null == id
@@ -108,6 +115,10 @@ class __$$_ProductCopyWithImpl<$Res>
           ? _value.name
           : name // ignore: cast_nullable_to_non_nullable
               as String,
+      null == storage
+          ? _value.storage
+          : storage // ignore: cast_nullable_to_non_nullable
+              as String,
     ));
   }
 }
@@ -115,7 +126,7 @@ class __$$_ProductCopyWithImpl<$Res>
 /// @nodoc
 @JsonSerializable()
 class _$_Product implements _Product {
-  const _$_Product(this.id, this.price, this.name);
+  const _$_Product(this.id, this.price, this.name, this.storage);
 
   factory _$_Product.fromJson(Map<String, dynamic> json) =>
       _$$_ProductFromJson(json);
@@ -126,10 +137,12 @@ class _$_Product implements _Product {
   final double price;
   @override
   final String name;
+  @override
+  final String storage;
 
   @override
   String toString() {
-    return 'Product(id: $id, price: $price, name: $name)';
+    return 'Product(id: $id, price: $price, name: $name, storage: $storage)';
   }
 
   @override
@@ -139,12 +152,13 @@ class _$_Product implements _Product {
             other is _$_Product &&
             (identical(other.id, id) || other.id == id) &&
             (identical(other.price, price) || other.price == price) &&
-            (identical(other.name, name) || other.name == name));
+            (identical(other.name, name) || other.name == name) &&
+            (identical(other.storage, storage) || other.storage == storage));
   }
 
   @JsonKey(ignore: true)
   @override
-  int get hashCode => Object.hash(runtimeType, id, price, name);
+  int get hashCode => Object.hash(runtimeType, id, price, name, storage);
 
   @JsonKey(ignore: true)
   @override
@@ -161,8 +175,8 @@ class _$_Product implements _Product {
 }
 
 abstract class _Product implements Product {
-  const factory _Product(final int id, final double price, final String name) =
-      _$_Product;
+  const factory _Product(final int id, final double price, final String name,
+      final String storage) = _$_Product;
 
   factory _Product.fromJson(Map<String, dynamic> json) = _$_Product.fromJson;
 
@@ -172,6 +186,8 @@ abstract class _Product implements Product {
   double get price;
   @override
   String get name;
+  @override
+  String get storage;
   @override
   @JsonKey(ignore: true)
   _$$_ProductCopyWith<_$_Product> get copyWith =>
