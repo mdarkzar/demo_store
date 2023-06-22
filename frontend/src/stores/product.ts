@@ -32,7 +32,7 @@ export const useProductStore = defineStore("product", {
   getters: {},
   actions: {
     async loadAll() {
-      const res = await siteAPI.get("/product/load");
+      const res = await siteAPI.get("/product/load_all");
       res.match(
         (r: loadAll) => {
           this.productList = r.productList;

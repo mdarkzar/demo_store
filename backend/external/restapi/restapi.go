@@ -38,7 +38,7 @@ func NewRestAPI(ui uimport.UsecaseImports,
 	p.POST("/create", api.AuthRequired(), api.CreateProduct)
 	p.POST("/remove", api.AuthRequired(), api.RemoveProduct)
 	p.GET("/find/:id", api.AuthRequired(), api.FindProduct)
-	p.GET("/load", api.AuthRequired(), api.LoadAllProduct)
+	p.GET("/load_all", api.AuthRequired(), api.LoadAllProduct)
 	p.GET("/storage_list", api.AuthRequired(), api.LoadStorageList)
 
 	n := apiGroup.Group("/notification")
