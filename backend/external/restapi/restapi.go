@@ -1,6 +1,7 @@
 package restapi
 
 import (
+	"context"
 	"net/http"
 	"store/tools/logger"
 	"store/uimport"
@@ -48,6 +49,13 @@ func NewRestAPI(ui uimport.UsecaseImports,
 }
 
 func (e *RestAPI) RunServer() {
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
+	// подключение к очереди
+	go e.Usecase.Queue.ConnectionControl(ctx)
+	e.Usecase.Queue.WaitConnectionInitialized()
+
 	e.gin.Run(e.Config.ApiURL())
 }
 

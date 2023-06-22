@@ -57,7 +57,7 @@ func (u *ProductUsecase) Create(ts transaction.Session, userID int, name string,
 		return
 	}
 
-	u.Bridge.Notification.SendAll(ts, notification.CreateProductTitle, notification.CreateProductBody(userData.Login, name, price))
+	u.Bridge.Notification.SendAllViaQueue(notification.CreateProductTitle, notification.CreateProductBody(userData.Login, name, price))
 
 	u.log.WithFields(lf).Infoln("создан продукт №", id)
 
@@ -99,7 +99,7 @@ func (u *ProductUsecase) Remove(ts transaction.Session, userID int, productID in
 		return global.ErrInternalError
 	}
 
-	u.Bridge.Notification.SendAll(ts, notification.DeleteProductTitle, notification.DeleteProductBody(productID, userData.Login, productData.Name, productData.Price))
+	u.Bridge.Notification.SendAllViaQueue(notification.DeleteProductTitle, notification.DeleteProductBody(productID, userData.Login, productData.Name, productData.Price))
 
 	u.log.WithFields(lf).Infoln("удален продукт №", productID)
 

@@ -2,7 +2,9 @@ package config
 
 import (
 	"fmt"
+	"log"
 	"os"
+	"time"
 
 	"github.com/jinzhu/configor"
 )
@@ -19,6 +21,9 @@ type Config struct {
 		IP   string `yaml:"ip"`
 		Port int    `yaml:"port"`
 	} `yaml:"api"`
+	Queue struct {
+		ReconnectSeconds int `yaml:"reconnect_seconds"`
+	} `yaml:"queue"`
 }
 
 // NewConfig инициализация конфига, считывания его с файла
@@ -38,4 +43,18 @@ func (c Config) PostgresURL() string {
 
 func (c Config) ApiURL() string {
 	return fmt.Sprintf("%s:%d", c.API.IP, c.API.Port)
+}
+
+// RabbitMQConnectURL подключение к rabbitmq
+func (c Config) RabbitMQConnectURL() string {
+	if os.Getenv("RABBIT_URL") != "" {
+		return fmt.Sprintf("amqp://%s/", os.Getenv("RABBIT_URL"))
+	}
+
+	log.Fatalln("отсутствует RABBIT_URL")
+	return ""
+}
+
+func (c Config) ReconnectQueue() time.Duration {
+	return time.Duration(c.Queue.ReconnectSeconds) * time.Second
 }
