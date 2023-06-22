@@ -17,7 +17,7 @@ const loading = ref(false);
 const form = reactive({
   name: "",
   price: "",
-  st_id: 1
+  st_id: 1,
 });
 
 const ruleFormRef = ref<FormInstance>();
@@ -63,7 +63,7 @@ const resetForm = () => {
   form.name = "";
   form.price = "";
   form.st_id = 1;
-}
+};
 
 const deleteProduct = async (productID: number) => {
   await productStore.remove(productID);
@@ -86,41 +86,68 @@ const loadStorageList = async () => {
 onMounted(() => {
   loading.value = true;
 
-  Promise.all([
-    loadProductList(),
-    loadStorageList()
-  ])
+  Promise.all([loadProductList(), loadStorageList()]);
 
   loading.value = false;
-
 });
 </script>
 
 <template>
-  <el-dialog v-model="productModal" destroy-on-close class="custom__modal" :fullscreen="false" title="Создание продукта">
-    <el-form ref="ruleFormRef" :model="form" label-position="top" :rules="rules">
+  <el-dialog
+    v-model="productModal"
+    destroy-on-close
+    class="custom__modal"
+    :fullscreen="false"
+    title="Создание продукта"
+  >
+    <el-form
+      ref="ruleFormRef"
+      :model="form"
+      label-position="top"
+      :rules="rules"
+    >
       <el-form-item prop="name">
         <el-input v-model="form.name" placeholder="Название"> </el-input>
       </el-form-item>
       <el-form-item prop="price">
-        <el-input type="number" v-model.trim="form.price" placeholder="Стоимость">
+        <el-input
+          type="number"
+          v-model.trim="form.price"
+          placeholder="Стоимость"
+        >
         </el-input>
       </el-form-item>
       <el-form-item prop="st_id">
-        <el-input type="number" v-model.trim="form.price" placeholder="Стоимость">
-        </el-input>
-        <select name="storage" v-model="form.st_id" v-if="productStore.storageList">
-          <option :value="storage.id" v-for="storage in productStore.storageList">
-            {{ storage.name }}
-          </option>
-        </select>
+        <el-select
+          v-model="form.st_id"
+          class="m-2"
+          placeholder="Выберите склад"
+          size="large"
+        >
+          <el-option
+            v-for="item in productStore.storageList"
+            :key="item.id"
+            :label="item.name"
+            :value="item.id"
+          />
+        </el-select>
       </el-form-item>
-      <el-form-item>
-        <el-button @click="createProduct(ruleFormRef)" type="primary">Создать продукт</el-button>
-      </el-form-item>
+      <div class="btn-row">
+        <el-form-item>
+          <el-button @click="createProduct(ruleFormRef)" type="primary"
+            >Создать продукт</el-button
+          >
+        </el-form-item>
+      </div>
     </el-form>
   </el-dialog>
-  <el-dialog v-model="notificationModal" destroy-on-close class="custom__modal" :fullscreen="false" title="Уведомления">
+  <el-dialog
+    v-model="notificationModal"
+    destroy-on-close
+    class="custom__modal"
+    :fullscreen="false"
+    title="Уведомления"
+  >
     <NotificationList></NotificationList>
   </el-dialog>
   <div class="main__section container">
@@ -136,19 +163,35 @@ onMounted(() => {
       </div>
     </el-card>
     <div class="product__list" v-loading.fullscreen.lock="loading">
-      <el-card class="box-card" v-for="product in productStore.productList" :key="product.id">
+      <el-card
+        class="box-card"
+        v-for="product in productStore.productList"
+        :key="product.id"
+      >
         <template #header>
           <div class="card-header">
             <div>{{ product.name }}</div>
-            <el-popconfirm title="Вы уверены, что хотите удалить?" @confirm="deleteProduct(product.id)"
-              confirm-button-text="Да" cancel-button-text="Нет" width="230px">
+            <el-popconfirm
+              title="Вы уверены, что хотите удалить?"
+              @confirm="deleteProduct(product.id)"
+              confirm-button-text="Да"
+              cancel-button-text="Нет"
+              width="230px"
+            >
               <template #reference>
-                <el-button class="button" type="danger" size="small">Удалить</el-button>
+                <el-button class="button" type="danger" size="small"
+                  >Удалить</el-button
+                >
               </template>
             </el-popconfirm>
           </div>
         </template>
-        <div>Стоимость: {{ numberFormatter(product.price) }}</div>
+        <div class="product-description">
+          <div class="description">
+            Стоимость: {{ numberFormatter(product.price) }}
+          </div>
+          <div class="description">{{ product.storage }}</div>
+        </div>
       </el-card>
     </div>
   </div>
@@ -200,11 +243,24 @@ onMounted(() => {
   @media screen and (max-width: 1000px) {
     grid-template-columns: repeat(1, 1fr);
   }
+
+  .product-description {
+    font-size: 12pt;
+    .description {
+      margin: 1rem 0 1rem 0;
+      padding-bottom: 0.3rem;
+      border-bottom: 1px solid #d6d6d6;
+    }
+  }
 }
 
 .card-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
+}
+
+.btn-row {
+  margin-top: 2.5rem;
 }
 </style>
