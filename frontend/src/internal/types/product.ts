@@ -4,6 +4,7 @@ export interface Product {
   price: number;
   creator_id: number;
   created_date: Date;
+  storage: string;
 }
 
 export interface Storage {
