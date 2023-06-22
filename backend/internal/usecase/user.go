@@ -9,6 +9,7 @@ import (
 	"store/internal/rimport"
 	"store/internal/transaction"
 	"store/tools/passfunc"
+	"strings"
 
 	"github.com/sirupsen/logrus"
 )
@@ -36,11 +37,15 @@ func NewUserUsecase(
 func (u *UserUsecase) Auth(ts transaction.Session, login, password string) (jwtToken string, err error) {
 	lf := logrus.Fields{"login": login}
 
+	// логин должен начинаться с приставки demo
+	if !strings.HasPrefix(login, "demo") {
+		return "", user.ErrLoginOrPasswordIncorrect
+	}
+
 	userData, err := u.Repository.User.FindByLogin(ts, login)
 	switch err {
 	case global.ErrNoData:
 		// сделать авторегистрацию
-
 		passHash, err := passfunc.BcryptCreatePassword(password)
 		if err != nil {
 			u.log.WithFields(lf).Errorln(

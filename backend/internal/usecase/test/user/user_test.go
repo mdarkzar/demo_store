@@ -1,6 +1,7 @@
 package template_test
 
 import (
+	"fmt"
 	"store/bimport"
 	"store/internal/entity/global"
 	"store/internal/entity/jwt"
@@ -46,6 +47,8 @@ func TestAuth(t *testing.T) {
 
 	faker.FakeData(&login)
 	faker.FakeData(&password)
+
+	login = fmt.Sprintf("demo%s", login)
 
 	passHash, err := passfunc.BcryptCreatePassword(password)
 	r.NoError(err)

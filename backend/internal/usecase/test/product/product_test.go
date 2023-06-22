@@ -59,7 +59,7 @@ func TestCreate(t *testing.T) {
 				gomock.InOrder(
 					f.ri.MockRepository.User.EXPECT().FindByID(f.ts, arg1.UserID).Return(userData, nil),
 					f.ri.MockRepository.Product.EXPECT().Create(f.ts, arg1.UserID, arg1.Name, arg1.Price, arg1.StID).Return(id, nil),
-					f.bi.TestBridge.Notification.EXPECT().SendAll(f.ts, notification.CreateProductTitle, notification.CreateProductBody(userData.Login, arg1.Name, arg1.Price)).Return(nil),
+					f.bi.TestBridge.Notification.EXPECT().SendAllViaQueue(notification.CreateProductTitle, notification.CreateProductBody(userData.Login, arg1.Name, arg1.Price)).Return(nil),
 				)
 			},
 			expectedData: id,
@@ -139,7 +139,7 @@ func TestRemove(t *testing.T) {
 					f.ri.MockRepository.Product.EXPECT().FindByID(f.ts, arg1.ProductID).Return(result, nil),
 					f.ri.MockRepository.User.EXPECT().FindByID(f.ts, arg1.UserID).Return(userData, nil),
 					f.ri.MockRepository.Product.EXPECT().Remove(f.ts, arg1.ProductID).Return(nil),
-					f.bi.TestBridge.Notification.EXPECT().SendAll(f.ts, notification.DeleteProductTitle, notification.DeleteProductBody(arg1.ProductID, userData.Login, result.Name, result.Price)).Return(nil),
+					f.bi.TestBridge.Notification.EXPECT().SendAllViaQueue(notification.DeleteProductTitle, notification.DeleteProductBody(arg1.ProductID, userData.Login, result.Name, result.Price)).Return(nil),
 				)
 			},
 			args: arg1,
