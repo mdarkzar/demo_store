@@ -31,7 +31,8 @@ func NewUsecaseImports(
 	}
 
 	ui := UsecaseImports{
-		Config: config,
+		Config:         config,
+		SessionManager: ri.SessionManager,
 		Usecase: Usecase{
 			User:         usecase.NewUserUsecase(logger.NewUsecaseLogger(log, "user"), ri, bi),
 			Product:      usecase.NewProductUsecase(logger.NewUsecaseLogger(log, "product"), ri, bi),
