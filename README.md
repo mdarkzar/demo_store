@@ -35,8 +35,4 @@ Frontend:
 
 * После запуска, сделать make test
 
-[Демо](https://demo-store.darkzar.uz) (временно выключен)
 
-* Логин любой и пароль - любой, действует авторегистрация, но логин должен начинаться с demo, например demo1, demo2 и тд.
-
-[Мобильная версия для Android](https://github.com/mdarkzar/demo_store/raw/main/mobile/demo_store_v1.apk)
